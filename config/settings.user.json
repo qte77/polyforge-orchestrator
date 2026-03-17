@@ -1,0 +1,25 @@
+{
+  "_comment": "Reference template for user-level ~/.claude/settings.json. Copy relevant sections.",
+  "_options": {
+    "A_sandbox_with_ergonomics": "Default. allowWrite + additionalDirectories. Sandbox ON.",
+    "B_sandbox_off": "sandbox.enabled: false. Container IS the sandbox. Trail of Bits approach.",
+    "C_hybrid_network_only": "Full filesystem access, network isolation kept. Best for Codespaces."
+  },
+  "model": "sonnet",
+  "permissions": {
+    "additionalDirectories": ["/workspaces"]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "filesystem": {
+      "allowWrite": ["/workspaces"]
+    },
+    "network": {
+      "allowedDomains": ["api.github.com", "*.githubusercontent.com"]
+    }
+  },
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true
+  }
+}
