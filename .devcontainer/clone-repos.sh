@@ -1,25 +1,18 @@
 #!/bin/bash
 # Clone all managed repos into the workspace
-# Sourced repo list from repos.conf, GitHub org derived from polyforge remote
+# Derives GitHub owner/repo from repos.conf paths — single source of truth
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../scripts/repos.conf"
 
-# GitHub repo names matching repos.conf order
-GITHUB_REPOS=(
-  qte77/Agents-eval
-  qte77/claude-code-research
-  qte77/CABIO-test
-  qte77/ralph-loop-cc-tdd-wt-vibe-kanban-template
-  qte77/claude-code-utils-plugin
-  qte77/deepvariant-linux-arm64
-)
+# Default GitHub org (override via GITHUB_ORG env var)
+ORG="${GITHUB_ORG:-qte77}"
 
-for i in "${!GITHUB_REPOS[@]}"; do
+for i in "${!REPOS[@]}"; do
   path="${REPOS[$i]}"
-  gh_repo="${GITHUB_REPOS[$i]}"
+  name=$(basename "$path")
 
   if [[ -d "$path" ]]; then
     echo "  ${REPO_NAMES[$i]}: exists (skipping)"
@@ -28,8 +21,8 @@ for i in "${!GITHUB_REPOS[@]}"; do
 
   echo "  ${REPO_NAMES[$i]}: cloning..."
   mkdir -p "$(dirname "$path")"
-  git clone "https://github.com/${gh_repo}.git" "$path" 2>/dev/null || \
-    echo "  WARNING: Failed to clone ${gh_repo}"
+  git clone "https://github.com/${ORG}/${name}.git" "$path" 2>/dev/null || \
+    echo "  WARNING: Failed to clone ${ORG}/${name}"
 done
 
 echo "Done. $(ls -d "${REPOS[@]}" 2>/dev/null | wc -l)/${#REPOS[@]} repos available."

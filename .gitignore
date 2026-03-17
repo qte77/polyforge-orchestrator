@@ -1,2 +1,7 @@
 .env
 *.log
+# Sandbox device nodes (denyWithinAllow artifacts)
+HEAD
+hooks
+objects
+refs

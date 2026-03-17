@@ -30,4 +30,3 @@ Remove `sandbox.filesystem` from project-level settings entirely. User-level `~/
 - `/workspaces/Agents-eval/.claude/settings.json` — removed redundant `sandbox.filesystem` block
 - `/workspaces/qte77/claude-code-research/.claude/settings.json` — removed redundant `sandbox.filesystem` block
 - User-level `~/.claude/settings.json` — single source of truth for `additionalDirectories` + `allowWrite`
-- Reference docs: `polyforge/docs/cross-repo-setup.md`, `polyforge/docs/sandbox-friction.md`

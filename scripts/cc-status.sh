@@ -43,7 +43,7 @@ for repo in "${REPOS[@]}"; do
   fi
 
   # Last commit
-  last_commit=$(git -C "$repo" log -1 --format='%ar: %s' 2>/dev/null | head -c 50)
+  last_commit=$(git -C "$repo" log -1 --format='%ar: %s' 2>/dev/null | head -c 70)
 
   printf "%-28s %-20s %-7s %-8s %s\n" "$name" "$branch" "$status" "$ralph_state" "$last_commit"
 
