@@ -3,7 +3,8 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/node:1": {}
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers-contrib/features/tmux:1": {}
   },
   "customizations": {
     "vscode": {
@@ -33,8 +34,9 @@
     }
   },
   "containerEnv": {
-    "GH_PAT": "${localEnv:GH_PAT}"
+    "GH_PAT": "${localEnv:GH_PAT}",
+    "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}"
   },
-  "onCreateCommand": "bash .devcontainer/clone-repos.sh",
-  "postAttachCommand": "code workspace.code-workspace && bash scripts/cc-repos.sh"
+  "onCreateCommand": "bash .devcontainer/clone-repos.sh && bash scripts/generate-workspace.sh",
+  "postAttachCommand": "echo '→ Open workspace: Ctrl+Shift+P → Open Workspace from File → workspace.code-workspace' && bash scripts/cc-repos.sh"
 }

@@ -26,3 +26,9 @@ for i in "${!REPOS[@]}"; do
 done
 
 echo "Done. $(ls -d "${REPOS[@]}" 2>/dev/null | wc -l)/${#REPOS[@]} repos available."
+
+# Seed WakaTime config from Codespace secret (prevents interactive prompt)
+if [[ -n "${WAKATIME_API_KEY:-}" && ! -f "$HOME/.wakatime.cfg" ]]; then
+  printf '[settings]\napi_key = %s\n' "$WAKATIME_API_KEY" > "$HOME/.wakatime.cfg"
+  echo "WakaTime: config seeded from WAKATIME_API_KEY"
+fi
