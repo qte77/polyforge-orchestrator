@@ -60,8 +60,23 @@ Best long-term approach: Codespaces encrypted secrets via `containerEnv` in `dev
 
 See `config/settings.user.json` for a reference template. Key pattern: `additionalDirectories` + `allowWrite` at user level covers all repos without per-project config.
 
+### Cloud Execution (CC Web)
+
+```bash
+# Fire-and-forget cloud sessions — no terminal keep-alive needed
+claude --remote "Run make validate" --repo github.com/qte77/Agents-eval
+claude --remote "Run make validate" --repo github.com/qte77/CABIO-test
+
+# Monitor from anywhere
+/tasks                         # In Claude Code terminal
+# Or: claude.ai/code, Claude mobile app
+```
+
+See `docs/cc-web-cloud-workflows.md` for the full local-to-cloud adaptation guide.
+
 ## Docs
 
+- `docs/cc-web-cloud-workflows.md` — Adapting polyforge for CC Web cloud execution
 - `docs/cross-repo-setup.md` — additionalDirectories + allowWrite pattern
 - `docs/sandbox-friction.md` — 4 friction points with mitigations
 - `docs/settings-consolidation.md` — DRY: user-level as single source of truth
