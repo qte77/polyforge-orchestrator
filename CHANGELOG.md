@@ -11,6 +11,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` dynamically from `repos.conf`
+- WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
+- tmux devcontainer feature for `cc-repos.sh` tmux sessions
+
+### Changed
+
+- `scripts/repos.conf`: dynamic `POLYFORGE_ROOT` detection (works at any checkout path)
+- `workspace.code-workspace` is now generated (added to `.gitignore`)
+- `postAttachCommand`: replaced `code workspace.code-workspace` with user instruction echo
+
+### Fixed
+
+- Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
+- tmux not available in devcontainer (missing feature)
+
 ## [0.0.1] - 2026-03-17
 
 ### Added

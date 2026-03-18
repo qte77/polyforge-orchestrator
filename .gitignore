@@ -1,5 +1,6 @@
 .env
 *.log
+workspace.code-workspace
 # Sandbox device nodes (denyWithinAllow artifacts)
 HEAD
 hooks
