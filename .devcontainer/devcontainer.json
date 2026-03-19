@@ -38,5 +38,5 @@
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}"
   },
   "onCreateCommand": "bash .devcontainer/clone-repos.sh && bash scripts/generate-workspace.sh",
-  "postAttachCommand": "echo '→ Open workspace: Ctrl+Shift+P → Open Workspace from File → workspace.code-workspace' && bash scripts/cc-repos.sh"
+  "postAttachCommand": "echo '→ Open workspace: Ctrl+Shift+P → Open Workspace from File → workspace.code-workspace'"
 }
