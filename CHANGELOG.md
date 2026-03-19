@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` dynamically from `repos.conf`
+- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` with folders and per-repo terminal tasks from `repos.conf`
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
 - tmux devcontainer feature for `cc-repos.sh` tmux sessions
 
@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/repos.conf`: dynamic `POLYFORGE_ROOT` detection (works at any checkout path)
 - `workspace.code-workspace` is now generated (added to `.gitignore`)
 - `postAttachCommand`: replaced `code workspace.code-workspace` with user instruction echo
+- Workspace file now includes `runOn: folderOpen` shell tasks — opens one split terminal per repo automatically
 
 ### Fixed
 
