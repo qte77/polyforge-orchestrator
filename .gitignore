@@ -1,7 +1,6 @@
 .env
 *.log
 workspace.code-workspace
-.vscode/tasks.json
 # Sandbox device nodes (denyWithinAllow artifacts)
 HEAD
 hooks

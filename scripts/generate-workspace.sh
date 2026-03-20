@@ -1,21 +1,22 @@
 #!/bin/bash
-# Generate .vscode/tasks.json (split terminals) and workspace.code-workspace (sidebar folders)
-# Both derived from repos.conf — single source of truth for repo paths
+# Generate workspace.code-workspace from repos.conf
+# Includes folders, split terminal tasks (runOn:folderOpen), and settings
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="${SCRIPT_DIR}/.."
 source "${SCRIPT_DIR}/repos.conf"
 
-# --- .vscode/tasks.json (auto-opens split terminals on folder open) ---
-mkdir -p "${ROOT_DIR}/.vscode"
-TASKS_FILE="${ROOT_DIR}/.vscode/tasks.json"
+WORKSPACE_FILE="${SCRIPT_DIR}/../workspace.code-workspace"
 
+folders=""
 tasks=""
 for i in "${!REPOS[@]}"; do
   path="${REPOS[$i]}"
   name="${REPO_NAMES[$i]}"
+
+  [[ -n "$folders" ]] && folders+=","
+  folders+=$'\n'"    { \"path\": \"${path}\", \"name\": \"${name}\" }"
 
   [[ -n "$tasks" ]] && tasks+=","
   tasks+=$'\n'"      {"
@@ -29,28 +30,18 @@ for i in "${!REPOS[@]}"; do
   tasks+=$'\n'"      }"
 done
 
-cat > "$TASKS_FILE" <<EOF
-{
-  "version": "2.0.0",
-  "tasks": [${tasks}
-  ]
-}
-EOF
-echo "Generated $TASKS_FILE with ${#REPOS[@]} terminal tasks"
-
-# --- workspace.code-workspace (optional, for multi-root sidebar) ---
-WORKSPACE_FILE="${ROOT_DIR}/workspace.code-workspace"
-
-folders=""
-for i in "${!REPOS[@]}"; do
-  [[ -n "$folders" ]] && folders+=","
-  folders+=$'\n'"    { \"path\": \"${REPOS[$i]}\", \"name\": \"${REPO_NAMES[$i]}\" }"
-done
-
 cat > "$WORKSPACE_FILE" <<EOF
 {
   "folders": [${folders}
-  ]
+  ],
+  "settings": {
+    "task.allowAutomaticTasks": "on"
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [${tasks}
+    ]
+  }
 }
 EOF
-echo "Generated $WORKSPACE_FILE with ${#REPOS[@]} folders (open manually for multi-root sidebar)"
+echo "Generated $WORKSPACE_FILE with ${#REPOS[@]} folders and terminal tasks"
