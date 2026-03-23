@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf`
+- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` with folders, `isBackground` terminal tasks, and compound `dependsOn` grouping from `repos.conf`
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
 - tmux devcontainer feature for `cc-repos.sh` (CLI/SSH usage)
 
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
-- Only one terminal on startup — tmux session with per-repo windows (Ctrl-b + number to switch)
+- Only one terminal on startup — workspace `isBackground` tasks with compound `dependsOn` auto-open split terminals per repo
 
 ## [0.0.1] - 2026-03-17
 
