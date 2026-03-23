@@ -32,3 +32,15 @@ if [[ -n "${WAKATIME_API_KEY:-}" && ! -f "$HOME/.wakatime.cfg" ]]; then
   printf '[settings]\napi_key = %s\n' "$WAKATIME_API_KEY" > "$HOME/.wakatime.cfg"
   echo "WakaTime: config seeded from WAKATIME_API_KEY"
 fi
+
+# Auto-attach to tmux repos session on terminal open
+if ! grep -q 'tmux.*repos' "$HOME/.bashrc" 2>/dev/null; then
+  cat >> "$HOME/.bashrc" <<'TMUX_BLOCK'
+
+# Auto-attach to polyforge tmux session (added by clone-repos.sh)
+if command -v tmux &>/dev/null && [ -z "${TMUX:-}" ] && tmux has-session -t repos 2>/dev/null; then
+  exec tmux attach -t repos
+fi
+TMUX_BLOCK
+  echo "tmux: auto-attach added to .bashrc"
+fi
