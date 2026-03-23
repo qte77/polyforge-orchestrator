@@ -2,10 +2,11 @@
 # cc-repos.sh — tmux session with one window per managed repo
 # Usage: ./cc-repos.sh [session-name]
 #
-# Creates a tmux session with persistent windows for each repo.
-# Switch between repos with Ctrl-b <number> or Ctrl-b w (window list).
+# Creates a detached tmux session with windows for each repo.
+# The tmux default terminal profile (devcontainer.json) auto-attaches.
+# Manual: tmux attach -t repos, or Ctrl-b w for window list.
 
-set -euo pipefail
+set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/repos.conf"
@@ -15,28 +16,27 @@ SESSION="${1:-repos}"
 # Kill existing session if present
 tmux kill-session -t "$SESSION" 2>/dev/null || true
 
-# Create session with first repo
-tmux new-session -d -s "$SESSION" -n "${REPO_NAMES[0]}" -c "${REPOS[0]}"
-
-# Add remaining repos as new windows
+# Create session — use first existing repo directory
+created=false
 for i in "${!REPOS[@]}"; do
-  [[ "$i" -eq 0 ]] && continue
   path="${REPOS[$i]}"
   name="${REPO_NAMES[$i]}"
   if [[ -d "$path" ]]; then
-    tmux new-window -t "$SESSION" -n "$name" -c "$path"
+    if [[ "$created" == false ]]; then
+      tmux new-session -d -s "$SESSION" -n "$name" -c "$path"
+      created=true
+    else
+      tmux new-window -t "$SESSION" -n "$name" -c "$path"
+    fi
   else
     echo "Warning: $path not found, skipping $name"
   fi
 done
 
-# Select first window
-tmux select-window -t "$SESSION:0"
-
-# Attach if not already in tmux
-if [[ -z "${TMUX:-}" ]]; then
-  tmux attach -t "$SESSION"
-else
-  echo "tmux session '$SESSION' created with ${#REPOS[@]} windows."
-  echo "Switch to it with: tmux switch-client -t $SESSION"
+if [[ "$created" == false ]]; then
+  echo "Error: no repo directories found"
+  exit 1
 fi
+
+tmux select-window -t "$SESSION:0"
+echo "tmux session '$SESSION' ready ($(tmux list-windows -t "$SESSION" | wc -l) windows)"
