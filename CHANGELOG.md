@@ -13,20 +13,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` with folders, `isBackground` terminal tasks, and compound `dependsOn` grouping from `repos.conf`
+- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf`; VS Code auto-detects for multi-root sidebar
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
-- tmux devcontainer feature for `cc-repos.sh` (CLI/SSH usage)
+- tmux devcontainer feature + `postAttachCommand` runs `cc-repos.sh` for per-repo tmux windows
 
 ### Changed
 
 - `scripts/repos.conf`: dynamic `POLYFORGE_ROOT` detection (works at any checkout path)
 - `workspace.code-workspace` is now generated (added to `.gitignore`)
-- `postAttachCommand`: opens workspace file (multi-root sidebar) + tmux session (one window per repo via `cc-repos.sh`)
+
+### Removed
+
+- `code workspace.code-workspace` from `postAttachCommand` (spawned new VS Code instance; sidebar loads automatically without it)
+- Workspace tasks (`runOn: folderOpen`) — do not fire in Codespaces
 
 ### Fixed
 
 - Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
-- Only one terminal on startup — workspace `isBackground` tasks with compound `dependsOn` auto-open split terminals per repo
+- Multiple terminals on startup via tmux (`cc-repos.sh`, Ctrl-b + number to switch)
 
 ## [0.0.1] - 2026-03-17
 

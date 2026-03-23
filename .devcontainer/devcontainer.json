@@ -29,8 +29,7 @@
         "dotfiles.repository": "qte77/dotfiles",
         "dotfiles.installCommand": "install.sh",
         "dotfiles.targetPath": "~/dotfiles",
-        "makefile.configureOnOpen": false,
-        "task.allowAutomaticTasks": "on"
+        "makefile.configureOnOpen": false
       }
     }
   },
@@ -39,5 +38,5 @@
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}"
   },
   "onCreateCommand": "bash .devcontainer/clone-repos.sh && bash scripts/generate-workspace.sh",
-  "postAttachCommand": "code workspace.code-workspace; bash scripts/cc-repos.sh"
+  "postAttachCommand": "bash scripts/cc-repos.sh"
 }
