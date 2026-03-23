@@ -39,13 +39,5 @@
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}"
   },
   "onCreateCommand": "bash .devcontainer/clone-repos.sh && bash scripts/generate-workspace.sh",
-  "postAttachCommand": {
-    "Agents-eval": "cd /workspaces/Agents-eval 2>/dev/null && exec $SHELL || true",
-    "cc-research": "cd /workspaces/qte77/coding-agents-research 2>/dev/null && exec $SHELL || true",
-    "CABIO-test": "cd /workspaces/qte77/CABIO-test 2>/dev/null && exec $SHELL || true",
-    "ralph-template": "cd /workspaces/qte77/ralph-loop-cc-tdd-wt-vibe-kanban-template 2>/dev/null && exec $SHELL || true",
-    "cc-utils-plugin": "cd /workspaces/qte77/claude-code-utils-plugin 2>/dev/null && exec $SHELL || true",
-    "deepvariant": "cd /workspaces/qte77/deepvariant-linux-arm64 2>/dev/null && exec $SHELL || true",
-    "polyforge": "exec $SHELL"
-  }
+  "postAttachCommand": "code workspace.code-workspace; bash scripts/cc-repos.sh"
 }

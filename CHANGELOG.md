@@ -21,12 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `scripts/repos.conf`: dynamic `POLYFORGE_ROOT` detection (works at any checkout path)
 - `workspace.code-workspace` is now generated (added to `.gitignore`)
-- `postAttachCommand`: object format with one terminal per repo (no workspace reload)
+- `postAttachCommand`: opens workspace file (multi-root sidebar) + tmux session (one window per repo via `cc-repos.sh`)
 
 ### Fixed
 
 - Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
-- Only one terminal on startup — `postAttachCommand` object format opens one terminal per repo
+- Only one terminal on startup — tmux session with per-repo windows (Ctrl-b + number to switch)
 
 ## [0.0.1] - 2026-03-17
 
