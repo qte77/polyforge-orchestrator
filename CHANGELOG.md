@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf`; VS Code auto-detects for multi-root sidebar
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
-- tmux devcontainer feature + `postAttachCommand` runs `cc-repos.sh` for per-repo tmux windows
+- tmux as default VS Code terminal profile (`terminal.integrated.defaultProfile.linux`)
+- `postAttachCommand` runs `cc-repos.sh` to create tmux session with per-repo windows
 
 ### Changed
 
@@ -30,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
-- Multiple terminals on startup via tmux (`cc-repos.sh`, Ctrl-b + number to switch)
+- Multiple terminals on startup — tmux is default terminal profile; every terminal opens into per-repo tmux session (Ctrl-b + number to switch)
 
 ## [0.0.1] - 2026-03-17
 

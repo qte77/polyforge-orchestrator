@@ -29,7 +29,15 @@
         "dotfiles.repository": "qte77/dotfiles",
         "dotfiles.installCommand": "install.sh",
         "dotfiles.targetPath": "~/dotfiles",
-        "makefile.configureOnOpen": false
+        "makefile.configureOnOpen": false,
+        "terminal.integrated.profiles.linux": {
+          "tmux": {
+            "path": "bash",
+            "args": ["-c", "tmux new-session -A -s repos"],
+            "icon": "terminal-tmux"
+          }
+        },
+        "terminal.integrated.defaultProfile.linux": "tmux"
       }
     }
   },
