@@ -13,25 +13,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf`; VS Code auto-detects for multi-root sidebar
+- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf` for multi-root sidebar
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
-- tmux as default VS Code terminal profile (`terminal.integrated.defaultProfile.linux`)
-- `postAttachCommand` runs `cc-repos.sh` to create tmux session with per-repo windows
+- tmux installed via `apt-get` in `onCreateCommand`; `cc-repos.sh` creates detached session with per-repo windows
+- tmux auto-attach via `.bashrc` — every new terminal opens into the repos session
 
 ### Changed
 
 - `scripts/repos.conf`: dynamic `POLYFORGE_ROOT` detection (works at any checkout path)
 - `workspace.code-workspace` is now generated (added to `.gitignore`)
+- `onCreateCommand` uses `;` separators (each step runs independently)
+- `cc-repos.sh`: creates detached session only (no `tmux attach` — `.bashrc` handles it)
 
 ### Removed
 
-- `code workspace.code-workspace` from `postAttachCommand` (spawned new VS Code instance; sidebar loads automatically without it)
+- `ghcr.io/devcontainers-contrib/features/tmux:1` — registry unavailable, crashes container build
+- `code workspace.code-workspace` from `postAttachCommand` (spawned new VS Code instance)
 - Workspace tasks (`runOn: folderOpen`) — do not fire in Codespaces
+- tmux default terminal profile — crashes VS Code workbench if tmux not ready
 
 ### Fixed
 
 - Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
-- Multiple terminals on startup — tmux is default terminal profile; every terminal opens into per-repo tmux session (Ctrl-b + number to switch)
+- Container recovery mode from `set -e` in `clone-repos.sh` and `&&` chain in `onCreateCommand`
+- tmux auto-attach on every new terminal via `.bashrc` hook
 
 ## [0.0.1] - 2026-03-17
 
