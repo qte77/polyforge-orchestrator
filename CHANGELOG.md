@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` with folders, split terminal tasks, and settings from `repos.conf`
+- `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf`
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
 - tmux devcontainer feature for `cc-repos.sh` (CLI/SSH usage)
 
@@ -21,12 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `scripts/repos.conf`: dynamic `POLYFORGE_ROOT` detection (works at any checkout path)
 - `workspace.code-workspace` is now generated (added to `.gitignore`)
-- `postAttachCommand`: opens `workspace.code-workspace` (activates multi-root sidebar + terminal tasks)
+- `postAttachCommand`: object format with one terminal per repo (no workspace reload)
 
 ### Fixed
 
 - Sidebar folders not loading when polyforge is the main Codespace repo (path mismatch)
-- Only one terminal on startup — workspace `runOn: folderOpen` tasks auto-open split terminals per repo
+- Only one terminal on startup — `postAttachCommand` object format opens one terminal per repo
 
 ## [0.0.1] - 2026-03-17
 

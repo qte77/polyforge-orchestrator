@@ -1,6 +1,7 @@
 #!/bin/bash
-# Generate workspace.code-workspace from repos.conf
-# Includes folders, split terminal tasks (runOn:folderOpen), and settings
+# Generate workspace.code-workspace from repos.conf (folders only)
+# Open manually for multi-root sidebar: Ctrl+Shift+P → Open Workspace from File
+# Terminals are handled by postAttachCommand object format in devcontainer.json
 
 set -euo pipefail
 
@@ -10,38 +11,15 @@ source "${SCRIPT_DIR}/repos.conf"
 WORKSPACE_FILE="${SCRIPT_DIR}/../workspace.code-workspace"
 
 folders=""
-tasks=""
 for i in "${!REPOS[@]}"; do
-  path="${REPOS[$i]}"
-  name="${REPO_NAMES[$i]}"
-
   [[ -n "$folders" ]] && folders+=","
-  folders+=$'\n'"    { \"path\": \"${path}\", \"name\": \"${name}\" }"
-
-  [[ -n "$tasks" ]] && tasks+=","
-  tasks+=$'\n'"      {"
-  tasks+=$'\n'"        \"label\": \"${name}\","
-  tasks+=$'\n'"        \"type\": \"shell\","
-  tasks+=$'\n'"        \"command\": \"exec \$SHELL\","
-  tasks+=$'\n'"        \"options\": { \"cwd\": \"${path}\" },"
-  tasks+=$'\n'"        \"runOptions\": { \"runOn\": \"folderOpen\" },"
-  tasks+=$'\n'"        \"presentation\": { \"group\": \"repos\", \"reveal\": \"always\" },"
-  tasks+=$'\n'"        \"problemMatcher\": []"
-  tasks+=$'\n'"      }"
+  folders+=$'\n'"    { \"path\": \"${REPOS[$i]}\", \"name\": \"${REPO_NAMES[$i]}\" }"
 done
 
 cat > "$WORKSPACE_FILE" <<EOF
 {
   "folders": [${folders}
-  ],
-  "settings": {
-    "task.allowAutomaticTasks": "on"
-  },
-  "tasks": {
-    "version": "2.0.0",
-    "tasks": [${tasks}
-    ]
-  }
+  ]
 }
 EOF
-echo "Generated $WORKSPACE_FILE with ${#REPOS[@]} folders and terminal tasks"
+echo "Generated $WORKSPACE_FILE with ${#REPOS[@]} folders"
