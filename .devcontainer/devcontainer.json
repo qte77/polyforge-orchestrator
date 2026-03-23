@@ -45,6 +45,6 @@
     "GH_PAT": "${localEnv:GH_PAT}",
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}"
   },
-  "onCreateCommand": "bash .devcontainer/clone-repos.sh && bash scripts/generate-workspace.sh",
+  "onCreateCommand": "bash .devcontainer/clone-repos.sh",
   "postAttachCommand": "bash scripts/cc-repos.sh"
 }
