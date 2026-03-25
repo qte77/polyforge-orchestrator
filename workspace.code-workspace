@@ -1,8 +1,8 @@
 {
   "folders": [
     { "path": "/workspaces/Agents-eval", "name": "Agents-eval" },
-    { "path": "/workspaces/qte77/coding-agents-research", "name": "cc-research" },
-    { "path": "/workspaces/qte77/CABIO-test", "name": "CABIO-test" },
+    { "path": "/workspaces/qte77/ai-agents-research", "name": "cc-research" },
+    { "path": "/workspaces/qte77/RAPID-spec-forge", "name": "RAPID-spec-forge" },
     { "path": "/workspaces/qte77/ralph-loop-cc-tdd-wt-vibe-kanban-template", "name": "ralph-template" },
     { "path": "/workspaces/qte77/claude-code-utils-plugin", "name": "cc-utils-plugin" },
     { "path": "/workspaces/qte77/deepvariant-linux-arm64", "name": "deepvariant" },

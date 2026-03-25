@@ -65,7 +65,7 @@ See `config/settings.user.json` for a reference template. Key pattern: `addition
 ```bash
 # Fire-and-forget cloud sessions — no terminal keep-alive needed
 claude --remote "Run make validate" --repo github.com/qte77/Agents-eval
-claude --remote "Run make validate" --repo github.com/qte77/CABIO-test
+claude --remote "Run make validate" --repo github.com/qte77/RAPID-spec-forge
 
 # Monitor from anywhere
 /tasks                         # In Claude Code terminal

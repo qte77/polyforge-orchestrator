@@ -93,7 +93,7 @@ jobs:
   validate:
     strategy:
       matrix:
-        repo: [Agents-eval, CABIO-test, coding-agents-research]
+        repo: [Agents-eval, RAPID-spec-forge, ai-agents-research]
     runs-on: ubuntu-latest
     steps:
       - uses: anthropics/claude-code-action@v1
@@ -110,7 +110,7 @@ jobs:
 ```
 $OUTPUT_DIR/
 ├── Agents-eval.json
-├── CABIO-test.json
+├── RAPID-spec-forge.json
 └── cc-research.json
 ```
 

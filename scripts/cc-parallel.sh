@@ -15,7 +15,7 @@
 #   security    — Audit for security issues
 #
 # Examples:
-#   ./cc-parallel.sh "Run make validate" /workspaces/Agents-eval /workspaces/qte77/CABIO-test
+#   ./cc-parallel.sh "Run make validate" /workspaces/Agents-eval /workspaces/qte77/RAPID-spec-forge
 #   ./cc-parallel.sh --preset validate
 #   ./cc-parallel.sh --max-budget 1.0 "Check for TODO comments" /workspaces/Agents-eval
 
