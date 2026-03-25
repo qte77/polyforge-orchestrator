@@ -29,7 +29,19 @@ echo "Done. $(ls -d "${REPOS[@]}" 2>/dev/null | wc -l)/${#REPOS[@]} repos availa
 
 # Seed WakaTime config from Codespace secret (prevents interactive prompt)
 if [[ -n "${WAKATIME_API_KEY:-}" && ! -f "$HOME/.wakatime.cfg" ]]; then
-  printf '[settings]\napi_key = %s\n' "$WAKATIME_API_KEY" > "$HOME/.wakatime.cfg"
+  cat > "$HOME/.wakatime.cfg" <<EOF
+[settings]
+api_key = ${WAKATIME_API_KEY}
+api_url = https://api.wakatime.com/api/v1
+heartbeat_rate_limit_seconds = 120
+# disabled: silently blocks all tracking in repos without .wakatime-project
+# include_only_with_project_file = true
+# disabled: drops heartbeats for any project WakaTime can't resolve a name for
+# exclude_unknown_project = true
+offline = true
+status_bar_enabled = true
+status_bar_coding_activity = true
+EOF
   echo "WakaTime: config seeded from WAKATIME_API_KEY"
 fi
 

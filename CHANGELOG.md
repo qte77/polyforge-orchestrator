@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `clone-repos.sh`: seed `~/.wakatime.cfg` with tracking-safe defaults — `include_only_with_project_file` and `exclude_unknown_project` silently block all heartbeats when `true` (closes #30)
+
 ### Added
 
 - `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf` for multi-root sidebar
