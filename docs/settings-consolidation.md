@@ -28,5 +28,5 @@ Remove `sandbox.filesystem` from project-level settings entirely. User-level `~/
 ### Applied To
 
 - `/workspaces/Agents-eval/.claude/settings.json` — removed redundant `sandbox.filesystem` block
-- `/workspaces/qte77/coding-agents-research/.claude/settings.json` — removed redundant `sandbox.filesystem` block
+- `/workspaces/qte77/ai-agents-research/.claude/settings.json` — removed redundant `sandbox.filesystem` block
 - User-level `~/.claude/settings.json` — single source of truth for `additionalDirectories` + `allowWrite`
