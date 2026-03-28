@@ -1,6 +1,8 @@
 #!/bin/bash
 # Generate .vscode/tasks.json from workspace.code-workspace
 # Each workspace folder gets a terminal task with runOn: folderOpen
+# "group": "repos" = side-by-side split terminals
+# Remove "group" for tabbed terminals instead
 
 set -euo pipefail
 

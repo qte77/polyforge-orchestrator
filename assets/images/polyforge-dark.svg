@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" font-family="'Segoe UI', system-ui, sans-serif">
+  <!-- Window frame -->
+  <rect width="960" height="540" rx="8" fill="#1e1e1e"/>
+  <rect width="960" height="32" rx="8" fill="#323233"/>
+  <rect y="28" width="960" height="4" fill="#323233"/>
+
+  <!-- Title bar dots -->
+  <circle cx="20" cy="16" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="16" r="6" fill="#febc2e"/>
+  <circle cx="60" cy="16" r="6" fill="#28c840"/>
+  <text x="480" y="20" text-anchor="middle" fill="#cccccc" font-size="12">polyforge — VS Code</text>
+
+  <!-- Sidebar -->
+  <rect x="0" y="32" width="220" height="508" fill="#252526"/>
+  <rect x="220" y="32" width="1" height="508" fill="#3c3c3c"/>
+
+  <!-- Sidebar header -->
+  <text x="12" y="54" fill="#bbbbbb" font-size="11" font-weight="600" letter-spacing="1">EXPLORER</text>
+
+  <!-- Repo entries -->
+  <g font-size="13" fill="#cccccc">
+    <text x="20" y="80" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="80">Agents-eval</text>
+    <text x="20" y="102" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="102">cc-research</text>
+    <text x="20" y="124" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="124">RAPID-spec-forge</text>
+    <text x="20" y="146" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="146">ralph-template</text>
+    <text x="20" y="168" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="168">cc-utils-plugin</text>
+    <text x="20" y="190" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="190">deepvariant</text>
+    <text x="20" y="212" fill="#e8ab53">&#x25B6;</text>
+    <text x="36" y="212">dotfiles</text>
+    <text x="20" y="234" fill="#e8ab53">&#x25BC;</text>
+    <text x="36" y="234" font-weight="600">polyforge</text>
+  </g>
+
+  <!-- Expanded polyforge tree -->
+  <g font-size="12" fill="#999999">
+    <text x="60" y="254">.claude/</text>
+    <text x="60" y="272">.devcontainer/</text>
+    <text x="60" y="290">.vscode/</text>
+    <text x="60" y="308">docs/</text>
+    <text x="60" y="326">scripts/</text>
+    <text x="60" y="344" fill="#cccccc">CLAUDE.md</text>
+    <text x="60" y="362" fill="#cccccc">Makefile</text>
+    <text x="60" y="380" fill="#cccccc">README.md</text>
+    <text x="60" y="398" fill="#6a9955">workspace.code-workspace</text>
+  </g>
+
+  <!-- Editor area -->
+  <rect x="221" y="32" width="739" height="280" fill="#1e1e1e"/>
+
+  <!-- Editor tab -->
+  <rect x="221" y="32" width="180" height="28" fill="#1e1e1e"/>
+  <rect x="401" y="32" width="1" height="28" fill="#3c3c3c"/>
+  <text x="234" y="50" fill="#ffffff" font-size="12">workspace.code-workspace</text>
+
+  <!-- Editor content - workspace file -->
+  <g font-size="12" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="240" y="82" fill="#6a737d">1</text>
+    <text x="270" y="82" fill="#d4d4d4">{</text>
+    <text x="240" y="100" fill="#6a737d">2</text>
+    <text x="270" y="100" fill="#9cdcfe">&quot;folders&quot;</text><text x="340" y="100" fill="#d4d4d4">: [</text>
+    <text x="240" y="118" fill="#6a737d">3</text>
+    <text x="282" y="118" fill="#d4d4d4">{ </text><text x="298" y="118" fill="#9cdcfe">&quot;path&quot;</text><text x="340" y="118" fill="#d4d4d4">: </text><text x="355" y="118" fill="#ce9178">&quot;/workspaces/qte77/Agents-eval&quot;</text><text x="620" y="118" fill="#d4d4d4"> },</text>
+    <text x="240" y="136" fill="#6a737d">4</text>
+    <text x="282" y="136" fill="#d4d4d4">{ </text><text x="298" y="136" fill="#9cdcfe">&quot;path&quot;</text><text x="340" y="136" fill="#d4d4d4">: </text><text x="355" y="136" fill="#ce9178">&quot;/workspaces/qte77/ai-agents-research&quot;</text><text x="660" y="136" fill="#d4d4d4"> },</text>
+    <text x="240" y="154" fill="#6a737d">5</text>
+    <text x="282" y="154" fill="#d4d4d4">{ </text><text x="298" y="154" fill="#9cdcfe">&quot;path&quot;</text><text x="340" y="154" fill="#d4d4d4">: </text><text x="355" y="154" fill="#ce9178">&quot;/workspaces/qte77/RAPID-spec-forge&quot;</text><text x="650" y="154" fill="#d4d4d4"> },</text>
+    <text x="240" y="172" fill="#6a737d">6</text>
+    <text x="282" y="172" fill="#6a9955">// ... 5 more repos</text>
+    <text x="240" y="190" fill="#6a737d">7</text>
+    <text x="270" y="190" fill="#d4d4d4">]</text>
+    <text x="240" y="208" fill="#6a737d">8</text>
+    <text x="270" y="208" fill="#d4d4d4">}</text>
+  </g>
+
+  <!-- Terminal area -->
+  <rect x="221" y="312" width="739" height="1" fill="#3c3c3c"/>
+  <rect x="221" y="313" width="739" height="227" fill="#1e1e1e"/>
+
+  <!-- Terminal splits (side-by-side, group: "repos") — 8 panes -->
+  <!-- Split dividers -->
+  <rect x="313" y="313" width="1" height="211" fill="#3c3c3c"/>
+  <rect x="405" y="313" width="1" height="211" fill="#3c3c3c"/>
+  <rect x="497" y="313" width="1" height="211" fill="#3c3c3c"/>
+  <rect x="589" y="313" width="1" height="211" fill="#3c3c3c"/>
+  <rect x="681" y="313" width="1" height="211" fill="#3c3c3c"/>
+  <rect x="773" y="313" width="1" height="211" fill="#3c3c3c"/>
+  <rect x="865" y="313" width="1" height="211" fill="#3c3c3c"/>
+
+  <!-- Split 1: Agents-eval -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="226" y="326" fill="#569cd6" font-size="9">Agents-eval</text>
+    <text x="226" y="342" fill="#d4d4d4">$ make validate</text>
+    <text x="226" y="356" fill="#6a9955">&#x2714; markdownlint</text>
+    <text x="226" y="370" fill="#6a9955">&#x2714; jscpd</text>
+    <text x="226" y="384" fill="#6a9955">&#x2714; lychee</text>
+    <text x="226" y="406" fill="#569cd6">$ _</text>
+  </g>
+
+  <!-- Split 2: cc-research (claude session) -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="318" y="326" fill="#569cd6" font-size="9">cc-research</text>
+    <text x="318" y="342" fill="#e8ab53">&#x276F; claude</text>
+    <text x="318" y="356" fill="#d19a66">You:</text><text x="342" y="356" fill="#d4d4d4"> summarize</text>
+    <text x="318" y="370" fill="#d4d4d4">recent changes</text>
+    <text x="318" y="388" fill="#569cd6">Claude:</text>
+    <text x="318" y="402" fill="#d4d4d4">3 commits on</text>
+    <text x="318" y="416" fill="#d4d4d4">main since..</text>
+    <text x="318" y="436" fill="#e8ab53">&#x276F; _</text>
+  </g>
+
+  <!-- Split 3: RAPID-spec-forge -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="410" y="326" fill="#569cd6" font-size="9">RAPID</text>
+    <text x="410" y="342" fill="#d4d4d4">$ make validate</text>
+    <text x="410" y="356" fill="#6a9955">&#x2714; ruff</text>
+    <text x="410" y="370" fill="#6a9955">&#x2714; pytest</text>
+    <text x="410" y="406" fill="#569cd6">$ _</text>
+  </g>
+
+  <!-- Split 4: ralph-template -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="502" y="326" fill="#569cd6" font-size="9">ralph</text>
+    <text x="502" y="342" fill="#d4d4d4">$ git log -1</text>
+    <text x="502" y="356" fill="#d4d4d4">feat: add</text>
+    <text x="502" y="370" fill="#d4d4d4">kanban loop</text>
+    <text x="502" y="406" fill="#569cd6">$ _</text>
+  </g>
+
+  <!-- Split 5: cc-utils-plugin (claude session) -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="594" y="326" fill="#569cd6" font-size="9">cc-utils</text>
+    <text x="594" y="342" fill="#e8ab53">&#x276F; claude</text>
+    <text x="594" y="356" fill="#d19a66">You:</text><text x="618" y="356" fill="#d4d4d4"> add tests</text>
+    <text x="594" y="370" fill="#d4d4d4">for commit-</text>
+    <text x="594" y="384" fill="#d4d4d4">helper plugin</text>
+    <text x="594" y="402" fill="#569cd6">Claude:</text>
+    <text x="594" y="416" fill="#6a9955">&#x2714; 4 tests</text>
+    <text x="594" y="436" fill="#e8ab53">&#x276F; _</text>
+  </g>
+
+  <!-- Split 6: deepvariant -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="686" y="326" fill="#569cd6" font-size="9">deepvariant</text>
+    <text x="686" y="342" fill="#d4d4d4">$ git status</text>
+    <text x="686" y="356" fill="#d4d4d4">On branch main</text>
+    <text x="686" y="370" fill="#d4d4d4">clean</text>
+    <text x="686" y="406" fill="#569cd6">$ _</text>
+  </g>
+
+  <!-- Split 7: polyforge -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="778" y="326" fill="#569cd6" font-size="9">polyforge</text>
+    <text x="778" y="342" fill="#d4d4d4">$ make help</text>
+    <text x="778" y="356" fill="#d4d4d4">clone_repos</text>
+    <text x="778" y="370" fill="#d4d4d4">setup_all</text>
+    <text x="778" y="384" fill="#d4d4d4">generate</text>
+    <text x="778" y="406" fill="#569cd6">$ _</text>
+  </g>
+
+  <!-- Split 8: dotfiles -->
+  <g font-size="8" font-family="'Cascadia Code', 'Fira Code', monospace">
+    <text x="870" y="326" fill="#569cd6" font-size="9">dotfiles</text>
+    <text x="870" y="342" fill="#d4d4d4">$ ls</text>
+    <text x="870" y="356" fill="#d4d4d4">.claude/</text>
+    <text x="870" y="370" fill="#d4d4d4">.config/</text>
+    <text x="870" y="384" fill="#d4d4d4">install.sh</text>
+    <text x="870" y="406" fill="#569cd6">$ _</text>
+  </g>
+
+  <!-- Status bar -->
+  <rect x="0" y="524" width="960" height="16" fill="#007acc"/>
+  <text x="12" y="535" fill="#ffffff" font-size="11">refactor/cleanup-yagni-kiss-dry</text>
+  <text x="280" y="535" fill="#ffffff" font-size="11">8 repos</text>
+  <text x="880" y="535" fill="#ffffff" font-size="11">UTF-8</text>
+</svg>

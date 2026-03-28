@@ -1,6 +1,17 @@
+<!-- markdownlint-disable MD033 -->
 # polyforge
 
 Polyrepo dev forge for parallel AI agent workflows.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="assets/images/polyforge-dark.svg">
+  <source media="(prefers-color-scheme: light)"
+    srcset="assets/images/polyforge-light.svg">
+  <img alt="polyforge workspace"
+    src="assets/images/polyforge-dark.svg"
+    width="100%">
+</picture>
 
 > **USP**: Orchestrate AI coding agents across N repos
 > in parallel — unified status and execution.
