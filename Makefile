@@ -20,7 +20,6 @@ setup_gh_auth:  ## Configure gh as git credential helper (uses GH_TOKEN from con
 
 setup_claude_code:  ## Setup claude code CLI
 	echo "Setting up Claude Code CLI ..."
-	cp -r .claude/.claude.json ~/.claude.json
 	if command -v claude > /dev/null 2>&1; then echo "claude already installed: $$(claude --version)"; \
 	else curl -fsSL https://claude.ai/install.sh | bash; fi
 	echo "Claude Code CLI version: $$(claude --version)"
