@@ -1,11 +1,12 @@
 <!-- markdownlint-disable MD033 -->
-# polyforge
+# polyforge-orchestrator
 
-Orchestrate AI coding agents across N repos
-in parallel from one Codespace.
+Orchestrate parallel AI coding agents across
+a polyrepo codebase from a single Codespace
+or devcontainer.
 
-**For** teams running AI coding agents across a
-polyrepo codebase in Codespaces or devcontainers.
+**For** teams running Claude Code (or other AI agents)
+across multiple repos simultaneously.
 **Run** `./scripts/cc-parallel.sh --preset validate`
 to validate all repos in one command.
 
@@ -17,12 +18,12 @@ to validate all repos in one command.
 ./scripts/cc-status.sh
 ```
 
-Repos: edit `workspace.code-workspace`. Credentials:
+Repos: edit `config/repos.conf`. Credentials:
 set `GH_PAT` as Codespace secret.
 
 <details>
   <summary>Workspace preview — multi-repo IDE layout with parallel terminals</summary>
-  <img alt="polyforge workspace"
+  <img alt="polyforge-orchestrator workspace"
     src="assets/images/polyforge.svg"
     width="100%">
 </details>
