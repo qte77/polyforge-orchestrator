@@ -1,41 +1,46 @@
 #!/bin/bash
-# Generate .vscode/tasks.json from workspace.code-workspace
-# Each workspace folder gets a terminal task with runOn: folderOpen
+# Generate workspace.code-workspace from config/repos.conf (single source of truth)
+# Creates folders list + terminal tasks with runOn: folderOpen
 # "group": "repos" = side-by-side split terminals
-# Remove "group" for tabbed terminals instead
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/load-workspace-repos.sh"
 
-TASKS_FILE="${POLYFORGE_ROOT}/.vscode/tasks.json"
-mkdir -p "$(dirname "$TASKS_FILE")"
+WORKSPACE_FILE="${POLYFORGE_ROOT}/workspace.code-workspace"
 
-tasks=""
-for i in "${!REPOS[@]}"; do
-  [[ -n "$tasks" ]] && tasks+=","
-  tasks+=$(cat <<EOF
-
-      {
-        "label": "${REPO_NAMES[$i]}",
-        "type": "shell",
-        "command": "exec \$SHELL",
-        "options": { "cwd": "${REPOS[$i]}" },
-        "runOptions": { "runOn": "folderOpen" },
-        "presentation": { "group": "repos", "reveal": "always" },
-        "problemMatcher": []
-      }
-EOF
-  )
+# Build folders array — polyforge + relative paths from gh_repo entries
+folders='[{"path": ".", "name": "polyforge"}]'
+for i in "${!GH_REPOS[@]}"; do
+  folders=$(echo "$folders" | jq \
+    --arg p "../${GH_REPOS[$i]}" \
+    --arg n "${REPO_NAMES[$((i+1))]}" \
+    '. + [{"path": $p, "name": $n}]')
 done
 
-cat > "$TASKS_FILE" <<EOF
-{
-  "version": "2.0.0",
-  "tasks": [${tasks}
-  ]
-}
-EOF
+# Build tasks array with resolved absolute paths
+tasks="[]"
+for i in "${!REPOS[@]}"; do
+  tasks=$(echo "$tasks" | jq \
+    --arg label "${REPO_NAMES[$i]}" \
+    --arg cwd "${REPOS[$i]}" \
+    '. + [{
+      "label": $label,
+      "type": "shell",
+      "command": "exec $SHELL",
+      "options": { "cwd": $cwd },
+      "runOptions": { "runOn": "folderOpen" },
+      "presentation": { "group": "repos", "reveal": "always" },
+      "problemMatcher": []
+    }]')
+done
 
-echo "Generated $TASKS_FILE with ${#REPOS[@]} tasks"
+# Write workspace file
+jq -n \
+  --argjson folders "$folders" \
+  --argjson tasks "$tasks" \
+  '{folders: $folders, tasks: {version: "2.0.0", tasks: $tasks}}' \
+  > "$WORKSPACE_FILE"
+
+echo "Generated $WORKSPACE_FILE with ${#REPOS[@]} repos and tasks"

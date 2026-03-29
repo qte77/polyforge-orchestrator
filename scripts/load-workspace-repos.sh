@@ -1,14 +1,24 @@
 #!/bin/bash
-# Load REPOS and REPO_NAMES arrays from workspace.code-workspace
+# Load REPOS, REPO_NAMES, and GH_REPOS arrays from config/repos.conf (SOT)
+# Derives local paths as ../owner/repo relative to polyforge root
+# Polyforge itself is always included as the first entry
 # Usage: source scripts/load-workspace-repos.sh
 
 POLYFORGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORKSPACE_FILE="${POLYFORGE_ROOT}/workspace.code-workspace"
+REPOS_CONF="${POLYFORGE_ROOT}/config/repos.conf"
 
-if [[ ! -f "$WORKSPACE_FILE" ]]; then
-  echo "Error: $WORKSPACE_FILE not found" >&2
+if [[ ! -f "$REPOS_CONF" ]]; then
+  echo "Error: $REPOS_CONF not found" >&2
   exit 1
 fi
 
-mapfile -t REPOS < <(jq -r '.folders[].path' "$WORKSPACE_FILE")
-mapfile -t REPO_NAMES < <(jq -r '.folders[].name' "$WORKSPACE_FILE")
+REPOS=("$POLYFORGE_ROOT")
+REPO_NAMES=("polyforge")
+GH_REPOS=()
+
+while IFS=: read -r gh_repo name; do
+  [[ -z "$gh_repo" || "$gh_repo" == \#* ]] && continue
+  REPOS+=("$(realpath -m "$POLYFORGE_ROOT/../$gh_repo")")
+  REPO_NAMES+=("$name")
+  GH_REPOS+=("$gh_repo")
+done < "$REPOS_CONF"
