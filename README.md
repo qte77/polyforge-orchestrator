@@ -21,15 +21,10 @@ Repos: edit `workspace.code-workspace`. Credentials:
 set `GH_PAT` as Codespace secret.
 
 <details>
-  <picture>
-    <source media="(prefers-color-scheme: dark)"
-      srcset="assets/images/polyforge-dark.svg">
-    <source media="(prefers-color-scheme: light)"
-      srcset="assets/images/polyforge-light.svg">
-    <img alt="polyforge workspace"
-      src="assets/images/polyforge-dark.svg"
-      width="100%">
-  </picture>
+  <summary>Workspace preview — multi-repo IDE layout with parallel terminals</summary>
+  <img alt="polyforge workspace"
+    src="assets/images/polyforge.svg"
+    width="100%">
 </details>
 
 ## Docs
