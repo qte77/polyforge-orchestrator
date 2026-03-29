@@ -35,6 +35,7 @@
   },
   "containerEnv": {
     "GH_PAT": "${localEnv:GH_PAT}",
+    "GH_TOKEN": "${localEnv:GH_PAT}",
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}",
     "RTK_TELEMETRY_DISABLED": "1"
   },
