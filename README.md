@@ -33,9 +33,10 @@ to validate all repos in one command.
 Edit `workspace.code-workspace` to add/remove repos.
 All scripts read from this single file.
 
-Credentials: Codespaces encrypted secrets via
-`containerEnv` in `devcontainer.json`.
-Alternative: copy `.env.example` to `.env`.
+Credentials: `GH_PAT` Codespace secret, mapped to
+`GH_TOKEN` via `containerEnv`. `make setup_all` runs
+`gh auth setup-git` so git uses `gh` for auth.
+See `docs/cross-repo-setup.md` for details and fallbacks.
 
 ## Docs
 

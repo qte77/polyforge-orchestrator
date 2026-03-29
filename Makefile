@@ -7,12 +7,15 @@
 .DEFAULT_GOAL := help
 
 setup_all: \
-	clone_repos setup_claude_code setup_claude_sandbox \
+	setup_gh_auth clone_repos setup_claude_code setup_claude_sandbox \
 	setup_npm_tools setup_lychee setup_rtk generate
 
 
 # MARK: SETUP
 
+
+setup_gh_auth:  ## Configure gh as git credential helper (uses GH_TOKEN from containerEnv)
+	gh auth setup-git
 
 setup_claude_code:  ## Setup claude code CLI
 	echo "Setting up Claude Code CLI ..."
