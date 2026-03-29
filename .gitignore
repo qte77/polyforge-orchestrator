@@ -1,9 +1,7 @@
 .env
 *.log
 # CC runtime artifacts (deployed by plugin + dotfiles)
-.claude/.claude.json
-.claude/rules/
-.claude/scripts/
+settings.local.json
 # Sandbox device nodes (denyWithinAllow artifacts)
 HEAD
 hooks

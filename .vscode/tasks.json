@@ -2,6 +2,15 @@
   "version": "2.0.0",
   "tasks": [
       {
+        "label": "polyforge",
+        "type": "shell",
+        "command": "exec $SHELL",
+        "options": { "cwd": "/workspaces/polyforge" },
+        "runOptions": { "runOn": "folderOpen" },
+        "presentation": { "group": "repos", "reveal": "always" },
+        "problemMatcher": []
+      },
+      {
         "label": "Agents-eval",
         "type": "shell",
         "command": "exec $SHELL",
@@ -51,15 +60,6 @@
         "type": "shell",
         "command": "exec $SHELL",
         "options": { "cwd": "/workspaces/qte77/deepvariant-linux-arm64" },
-        "runOptions": { "runOn": "folderOpen" },
-        "presentation": { "group": "repos", "reveal": "always" },
-        "problemMatcher": []
-      },
-      {
-        "label": "polyforge",
-        "type": "shell",
-        "command": "exec $SHELL",
-        "options": { "cwd": "/workspaces/qte77/polyforge" },
         "runOptions": { "runOn": "folderOpen" },
         "presentation": { "group": "repos", "reveal": "always" },
         "problemMatcher": []
