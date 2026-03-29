@@ -1,5 +1,5 @@
 {
-  "name": "polyforge",
+  "name": "polyforge-orchestrator",
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},

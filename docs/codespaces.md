@@ -18,7 +18,7 @@ local devcontainers, not Codespaces.
 
 ## Management
 
-Manage any Codespace from within polyforge using `-c`:
+Manage any Codespace from within polyforge-orchestrator using `-c`:
 
 ```bash
 gh codespace list
@@ -34,7 +34,7 @@ gh codespace logs  -c <name>
 Secrets are set at user level and scoped to repos:
 
 ```bash
-gh secret set GH_PAT --user --repos qte77/polyforge
+gh secret set GH_PAT --user --repos qte77/polyforge-orchestrator
 gh secret list --user
 ```
 
