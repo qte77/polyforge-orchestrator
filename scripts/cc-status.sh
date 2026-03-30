@@ -8,6 +8,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/load-workspace-repos.sh"
+source "${SCRIPT_DIR}/colors.sh"
 
 VERBOSE="${1:-}"
 
@@ -17,7 +18,7 @@ printf "%-28s %-20s %-7s %s\n" "----" "------" "------" "-----------"
 
 for repo in "${REPOS[@]}"; do
   if [[ ! -d "$repo/.git" ]]; then
-    printf "%-28s %s\n" "$(basename "$repo")" "(not found)"
+    printf "%-28s %s\n" "$(basename "$repo")" "$(warn '(not found)')"
     continue
   fi
 

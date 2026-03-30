@@ -21,6 +21,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/load-workspace-repos.sh"
+source "${SCRIPT_DIR}/colors.sh"
 
 # Defaults
 MAX_TURNS=10
@@ -42,7 +43,7 @@ while [[ $# -gt 0 ]]; do
     --preset) PRESET="$2"; shift 2 ;;
     --help|-h) usage ;;
     -*)
-      echo "Unknown option: $1" >&2
+      error "Unknown option: $1"
       usage
       ;;
     *)
@@ -73,18 +74,18 @@ case "$PRESET" in
     # No preset, need prompt and repos from args
     ;;
   *)
-    echo "Unknown preset: $PRESET" >&2
+    error "Unknown preset: $PRESET"
     usage
     ;;
 esac
 
 if [[ -z "$PROMPT" ]]; then
-  echo "Error: No prompt provided." >&2
+  error "No prompt provided."
   usage
 fi
 
 if [[ ${#TARGET_REPOS[@]} -eq 0 ]]; then
-  echo "Error: No repos specified." >&2
+  error "No repos specified."
   usage
 fi
 
@@ -94,11 +95,11 @@ if [[ -z "$OUTPUT_DIR" ]]; then
 fi
 mkdir -p "$OUTPUT_DIR"
 
-echo "=== CC Parallel Runner ==="
-echo "Prompt:     ${PROMPT:0:80}$([ ${#PROMPT} -gt 80 ] && echo '...')"
-echo "Repos:      ${#TARGET_REPOS[@]}"
-echo "Max turns:  $MAX_TURNS"
-echo "Output:     $OUTPUT_DIR"
+info "=== CC Parallel Runner ==="
+info "Prompt:     ${PROMPT:0:80}$([ ${#PROMPT} -gt 80 ] && echo '...')"
+info "Repos:      ${#TARGET_REPOS[@]}"
+info "Max turns:  $MAX_TURNS"
+info "Output:     $OUTPUT_DIR"
 echo ""
 
 # Track PIDs for wait
@@ -107,7 +108,7 @@ declare -A PIDS
 # Launch parallel claude instances
 for repo in "${TARGET_REPOS[@]}"; do
   if [[ ! -d "$repo" ]]; then
-    echo "Warning: $repo not found, skipping"
+    warn "$repo not found, skipping"
     continue
   fi
 
@@ -115,7 +116,7 @@ for repo in "${TARGET_REPOS[@]}"; do
   outfile="${OUTPUT_DIR}/${name}.json"
   logfile="${OUTPUT_DIR}/${name}.log"
 
-  echo "Starting: $name"
+  info "Starting: $name"
 
   (
     cd "$repo"
@@ -128,7 +129,7 @@ for repo in "${TARGET_REPOS[@]}"; do
 done
 
 echo ""
-echo "Waiting for ${#PIDS[@]} instances..."
+info "Waiting for ${#PIDS[@]} instances..."
 echo ""
 
 # Collect results
@@ -162,10 +163,14 @@ for name in "${!PIDS[@]}"; do
 done
 
 echo ""
-echo "=== Summary ==="
-echo "Total repos:    ${#PIDS[@]}"
-echo "Failures:       $FAILURES"
-echo "Total cost:     \$${TOTAL_COST}"
-echo "Results in:     $OUTPUT_DIR"
+info "=== Summary ==="
+info "Total repos:    ${#PIDS[@]}"
+if [[ "$FAILURES" -gt 0 ]]; then
+  error "Failures:       $FAILURES"
+else
+  success "Failures:       $FAILURES"
+fi
+info "Total cost:     \$${TOTAL_COST}"
+info "Results in:     $OUTPUT_DIR"
 
 exit "$FAILURES"

@@ -1,10 +1,16 @@
 .SILENT:
 .ONESHELL:
+SHELL := /bin/bash
 .PHONY: \
 	help setup_all setup_vscode setup_gh_auth setup_claude_code \
 	setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
 	generate_tasks clone_repos
 .DEFAULT_GOAL := help
+
+# Source colors for all recipes
+define _src_colors
+source scripts/colors.sh
+endef
 
 
 # MARK: SETUP
@@ -15,14 +21,16 @@ setup_all: \
 	setup_npm_tools setup_lychee setup_rtk generate_tasks
 
 setup_gh_auth:  ## Configure gh as git credential helper (uses GH_TOKEN from containerEnv)
+	$(_src_colors)
 	if command -v gh > /dev/null 2>&1; then gh auth setup-git; \
-	else echo "gh cli not installed. skipping auth."; fi
+	else warn "gh cli not installed. skipping auth."; fi
 
 setup_claude_code:  ## Setup claude code CLI
-	echo "Setting up Claude Code CLI ..."
-	if command -v claude > /dev/null 2>&1; then echo "claude already installed: $$(claude --version)"; \
+	$(_src_colors)
+	info "Setting up Claude Code CLI ..."
+	if command -v claude > /dev/null 2>&1; then info "claude already installed: $$(claude --version)"; \
 	else curl -fsSL https://claude.ai/install.sh | bash; fi
-	echo "Claude Code CLI version: $$(claude --version)"
+	success "Claude Code CLI version: $$(claude --version)"
 
 setup_claude_sandbox:  ## Install sandbox deps (bubblewrap, socat) for Linux/WSL2
 	# Required for Claude Code sandboxing on Linux/WSL2:
@@ -32,33 +40,37 @@ setup_claude_sandbox:  ## Install sandbox deps (bubblewrap, socat) for Linux/WSL
 	# https://code.claude.com/docs/en/sandboxing
 	# https://code.claude.com/docs/en/settings#sandbox-settings
 	# https://code.claude.com/docs/en/security
-	echo "Installing sandbox dependencies ..."
+	$(_src_colors)
+	info "Installing sandbox dependencies ..."
 	if command -v apt-get > /dev/null; then
 		sudo apt-get update -qq && sudo apt-get install -y bubblewrap socat
 	elif command -v dnf > /dev/null; then
 		sudo dnf install -y bubblewrap socat
 	else
-		echo "Unsupported package manager. Install bubblewrap and socat manually."
+		error "Unsupported package manager. Install bubblewrap and socat manually."
 		exit 1
 	fi
-	echo "Sandbox dependencies installed."
+	success "Sandbox dependencies installed."
 
 
 setup_rtk:  ## Install RTK CLI for token-optimized LLM output
-	if command -v rtk > /dev/null 2>&1; then echo "rtk already installed: $$(rtk --version)"; \
+	$(_src_colors)
+	if command -v rtk > /dev/null 2>&1; then info "rtk already installed: $$(rtk --version)"; \
 	else GITHUB_TOKEN= GH_TOKEN= curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | GITHUB_TOKEN= GH_TOKEN= sh; fi
 	rtk init -g --auto-patch
 
 setup_npm_tools:  ## Setup npm-based dev tools (markdownlint, jscpd). Requires node.js and npm
-	echo "Setting up npm dev tools ..."
+	$(_src_colors)
+	info "Setting up npm dev tools ..."
 	npm install -gs markdownlint-cli jscpd
-	echo "markdownlint version: $$(markdownlint --version)"
-	echo "jscpd version: $$(jscpd --version)"
+	success "markdownlint version: $$(markdownlint --version)"
+	success "jscpd version: $$(jscpd --version)"
 
 setup_lychee:  ## Install lychee link checker (Rust binary, requires sudo)
-	if command -v lychee > /dev/null 2>&1; then echo "lychee already installed: $$(lychee --version)"; \
+	$(_src_colors)
+	if command -v lychee > /dev/null 2>&1; then info "lychee already installed: $$(lychee --version)"; \
 	else curl -sL https://github.com/lycheeverse/lychee/releases/latest/download/lychee-x86_64-unknown-linux-gnu.tar.gz | sudo tar xz -C /usr/local/bin lychee; fi
-	echo "lychee version: $$(lychee --version)"
+	success "lychee version: $$(lychee --version)"
 
 
 # MARK: VSCODE
@@ -68,11 +80,13 @@ start_workspace:  ## Open workspace in current VS Code window
 	if command -v code > /dev/null 2>&1; then code -r workspace.code-workspace; fi
 
 clone_repos:  ## Clone all managed repos from config/repos.conf
-	echo "Cloning repos..."
+	$(_src_colors)
+	info "Cloning repos..."
 	bash scripts/clone-repos.sh
 
 generate_tasks:  ## Generate workspace.code-workspace from config/repos.conf
-	echo "Generating vscode tasks..."
+	$(_src_colors)
+	info "Generating vscode tasks..."
 	bash scripts/generate-tasks.sh
 
 

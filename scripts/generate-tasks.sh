@@ -7,6 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/load-workspace-repos.sh"
+source "${SCRIPT_DIR}/colors.sh"
 
 WORKSPACE_FILE="${POLYFORGE_ROOT}/workspace.code-workspace"
 
@@ -43,4 +44,4 @@ jq -n \
   '{folders: $folders, tasks: {version: "2.0.0", tasks: $tasks}}' \
   > "$WORKSPACE_FILE"
 
-echo "Generated $WORKSPACE_FILE with ${#REPOS[@]} repos and tasks"
+success "Generated $WORKSPACE_FILE with ${#REPOS[@]} repos and tasks"
