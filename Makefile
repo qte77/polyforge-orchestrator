@@ -12,7 +12,7 @@
 
 setup_all: \
 	setup_gh_auth clone_repos setup_claude_code setup_claude_sandbox \
-	setup_npm_tools setup_lychee setup_rtk generate_tasks start_workspace
+	setup_npm_tools setup_lychee setup_rtk generate_tasks
 
 setup_gh_auth:  ## Configure gh as git credential helper (uses GH_TOKEN from containerEnv)
 	if command -v gh > /dev/null 2>&1; then gh auth setup-git; \
