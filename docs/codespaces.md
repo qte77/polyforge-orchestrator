@@ -1,5 +1,22 @@
 # Codespaces
 
+## Devcontainer Lifecycle
+
+polyforge uses two lifecycle hooks in `devcontainer.json`:
+
+- **`onCreateCommand`** (`make setup_all`) — installs shared
+  tooling, clones repos, generates workspace file. Runs once
+  on container creation.
+- **`postAttachCommand`** (`make setup_repos`) — runs each
+  repo's `onCreateCommand` + `postCreateCommand` from their
+  own `devcontainer.json` inside the host container. This is
+  needed because multi-root workspaces only execute the host
+  container's devcontainer lifecycle, not the workspace folders'.
+
+Terminal tasks (`runOn: folderOpen`) in `workspace.code-workspace`
+auto-open a shell per repo. Controlled by the
+`task.allowAutomaticTasks: "on"` setting.
+
 ## Rebuild
 
 After changing `devcontainer.json`, rebuild to apply:

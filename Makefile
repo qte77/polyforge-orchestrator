@@ -2,7 +2,7 @@
 .ONESHELL:
 SHELL := /bin/bash
 .PHONY: \
-	help setup_all setup_vscode setup_gh_auth setup_claude_code \
+	help setup_all setup_repos setup_vscode setup_gh_auth setup_claude_code \
 	setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
 	generate_tasks clone_repos
 .DEFAULT_GOAL := help
@@ -77,15 +77,15 @@ setup_rtk:  ## Install RTK CLI for token-optimized LLM output
 	fi
 	command -v rtk > /dev/null 2>&1 && rtk init -g --auto-patch || true
 
-setup_npm_tools:  ## Setup npm-based dev tools (markdownlint, jscpd). Requires node.js and npm
+setup_npm_tools:  ## Setup npm-based dev tools (markdownlint, jscpd) locally
 	$(_src_colors)
-	info "Setting up npm dev tools ..."
-	npm install -gs markdownlint-cli jscpd \
+	info "Setting up npm dev tools (local)..."
+	npm install --save-dev markdownlint-cli jscpd \
 		|| (warn "latest npm install failed, trying pinned versions..." && \
-			npm install -gs markdownlint-cli@$(MARKDOWNLINT_VERSION) jscpd@$(JSCPD_VERSION)) \
+			npm install --save-dev markdownlint-cli@$(MARKDOWNLINT_VERSION) jscpd@$(JSCPD_VERSION)) \
 		|| warn "npm tools install failed, skipping"
-	command -v markdownlint > /dev/null 2>&1 && success "markdownlint version: $$(markdownlint --version)" || true
-	command -v jscpd > /dev/null 2>&1 && success "jscpd version: $$(jscpd --version)" || true
+	npx markdownlint --version > /dev/null 2>&1 && success "markdownlint version: $$(npx markdownlint --version)" || true
+	npx jscpd --version > /dev/null 2>&1 && success "jscpd version: $$(npx jscpd --version)" || true
 
 setup_lychee:  ## Install lychee link checker (Rust binary, requires sudo)
 	$(_src_colors)
@@ -97,6 +97,29 @@ setup_lychee:  ## Install lychee link checker (Rust binary, requires sudo)
 		|| warn "lychee install failed, skipping"; \
 	fi
 	command -v lychee > /dev/null 2>&1 && success "lychee version: $$(lychee --version)" || true
+
+
+setup_repos:  ## Run each repo's devcontainer setup commands (uv, npm, etc.)
+	# In a multi-root workspace only the host container's devcontainer lifecycle
+	# runs. This recipe bridges the gap: it reads onCreateCommand and
+	# postCreateCommand from each repo's devcontainer.json and executes them
+	# inside the host container. Failures are non-fatal.
+	$(_src_colors)
+	source scripts/load-workspace-repos.sh
+	for repo in "$${REPOS[@]:1}"; do \
+		dc="$$repo/.devcontainer/devcontainer.json"; \
+		if [[ ! -f "$$dc" ]]; then continue; fi; \
+		name=$$(basename "$$repo"); \
+		oncreate=$$(jq -r '.onCreateCommand // empty' "$$dc" 2>/dev/null); \
+		postcreate=$$(jq -r '.postCreateCommand // empty' "$$dc" 2>/dev/null); \
+		if [[ -z "$$oncreate" && -z "$$postcreate" ]]; then continue; fi; \
+		info "$$name: running devcontainer setup..."; \
+		(cd "$$repo" && \
+			{ [[ -z "$$oncreate" ]] || eval "$$oncreate"; } && \
+			{ [[ -z "$$postcreate" ]] || eval "$$postcreate"; } && \
+			success "$$name: setup complete" \
+		) || warn "$$name: setup failed, continuing"; \
+	done
 
 
 # MARK: VSCODE
