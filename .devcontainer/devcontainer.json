@@ -39,6 +39,5 @@
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}",
     "RTK_TELEMETRY_DISABLED": "1"
   },
-  "onCreateCommand": "make setup_all",
-  "postAttachCommand": "make start_workspace"
+  "onCreateCommand": "make setup_all"
 }
