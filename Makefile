@@ -2,9 +2,9 @@
 .ONESHELL:
 SHELL := /bin/bash
 .PHONY: \
-	help setup_all setup_repos setup_dotfiles setup_gh_auth setup_claude_code \
-	setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
-	generate_tasks clone_repos start_workspace
+	help setup_all setup_dirty setup_repos setup_dotfiles setup_gh_auth \
+	setup_claude_code setup_claude_sandbox setup_rtk setup_npm_tools \
+	setup_lychee generate_tasks clone_repos start_workspace
 .DEFAULT_GOAL := help
 
 # Source colors for all recipes
@@ -22,13 +22,22 @@ JSCPD_VERSION := 4.0.8
 # MARK: SETUP
 
 
-setup_all:  ## Run all setup steps (non-fatal: failures warn, don't abort)
+setup_all:  ## Run all setup steps for clean environment (onCreateCommand)
 	$(_src_colors)
 	for target in setup_gh_auth clone_repos setup_dotfiles setup_claude_code \
 		setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee generate_tasks; do \
 		$(MAKE) $$target || warn "$$target failed, continuing..."; \
 	done
 	success "Setup complete"
+
+setup_dirty:  ## Re-deploy settings into existing environment (force-overwrites stale configs)
+	$(_src_colors)
+	info "Dirty setup: force-deploying dotfiles and re-running tools..."
+	rm -f ~/.claude/settings.json
+	for target in setup_dotfiles setup_rtk generate_tasks; do \
+		$(MAKE) $$target || warn "$$target failed, continuing..."; \
+	done
+	success "Dirty setup complete — restart Claude Code to pick up new settings"
 
 setup_gh_auth:  ## Configure gh as git credential helper (uses GH_TOKEN from containerEnv)
 	$(_src_colors)
