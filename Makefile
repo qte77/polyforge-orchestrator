@@ -6,7 +6,8 @@ SHELL := /bin/bash
 	setup_claude_code setup_claude_sandbox setup_rtk setup_npm_tools \
 	setup_lychee generate_tasks clone_repos start_workspace \
 	contrib_setup contrib_triage contrib_implement contrib_review \
-	contrib_status contrib_cleanup
+	contrib_status contrib_cleanup \
+	learnings_sync
 .DEFAULT_GOAL := help
 
 # Source colors for all recipes
@@ -205,6 +206,15 @@ contrib_cleanup:  ## Prune worktrees and stale contribution branches
 		fi; \
 	done
 	success "Cleanup complete"
+
+
+# MARK: LEARNINGS
+
+
+learnings_sync:  ## Distill local CC session data into ai-agents-research learnings
+	$(_src_colors)
+	info "Syncing CC learnings (bigpicture + plan distillation)..."
+	bash scripts/learnings-sync.sh
 
 
 # MARK: HELP
