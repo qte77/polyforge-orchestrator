@@ -99,6 +99,40 @@ WEEK 3 — Strategic
 | tj-actions | Standard | Feature PRs welcome | Well-scoped, one feature per PR |
 | release-please | Standard | Google CLA required | Sign CLA first |
 
+## Deferred TODOs
+
+### BayramAnnakov/claude-reflect
+
+- [x] #25 — pytest not found in CI (quick win, DOING NOW)
+- [ ] Review + improve PR #26 — CLAUDE_PLUGIN_ROOT fallback (fixes #17)
+- [ ] PR #27 — SessionEnd hook (stalled 3 weeks, revive + add tests)
+- [ ] Multi-project reflection aggregation — reflect across repos not just one (strategic)
+
+### SWE-bench/SWE-bench
+
+- [x] #472 — clarify eval output JSON docs (quick win, DOING NOW)
+- [ ] #474 — check_fail_only evaluates fatal errors as resolved (bug fix, no competing PR)
+- [ ] #410 — clarify patch_is_None vs patch_exists (docs)
+- [ ] #502 — missing django-7530 test case (dataset fix)
+- [ ] #513 — matplotlib large UID files breaking podman (bug fix)
+
+### disler/claude-code-hooks-multi-agent-observability
+
+Demoted — 0 PRs ever merged, 15 stalled. Adopt patterns instead of contributing upstream.
+See qte77/Agents-eval#104, #105, #106 for our approach (extract into cc-meta skill).
+
+### tj-actions/changed-files
+
+Demoted — solo maintainer ignores external PRs for months.
+
+- [ ] #2839 — newline separator option (if maintainer becomes responsive)
+
+### googleapis/release-please
+
+Demoted — Google CLA + 20 stalled external PRs.
+
+- [ ] #2696 — `||` vs `??` for header/footer (one-line fix, if CLA signed)
+
 ## Workflow
 
 All contributions follow fork-first:
