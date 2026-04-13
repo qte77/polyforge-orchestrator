@@ -1,0 +1,107 @@
+{
+  "$schema": "ontology.schema.json",
+  "version": "1.0.0",
+  "entities": {
+    "repo": {
+      "description": "Git repository managed by polyforge",
+      "storage": { "type": "file", "path": "config/repos.conf", "format": "conf" },
+      "id_field": "owner/repo",
+      "persisted": true,
+      "writer": ["human"],
+      "reader": ["script", "agent"]
+    },
+    "issue": {
+      "description": "GitHub issue — canonical task SOT",
+      "storage": { "type": "github", "scope": "issues" },
+      "id_field": "issue_number",
+      "persisted": true,
+      "writer": ["human", "agent", "gha"],
+      "reader": ["human", "agent", "script"]
+    },
+    "plan": {
+      "description": "CC plan file — session-scoped decisions and research",
+      "storage": { "type": "glob", "pattern": "~/.claude/plans/*.md", "format": "markdown" },
+      "id_field": "filename",
+      "persisted": false,
+      "writer": ["cc-runtime"],
+      "reader": ["cc-runtime", "agent"]
+    },
+    "task": {
+      "description": "Cross-project task tracked in contributions.json",
+      "storage": { "type": "file", "path": "config/contributions.json", "format": "json" },
+      "id_field": "id",
+      "persisted": true,
+      "writer": ["script", "agent"],
+      "reader": ["script", "agent"]
+    },
+    "story": {
+      "description": "Per-repo Ralph story tracked in prd.json",
+      "storage": { "type": "glob", "pattern": "*/ralph/docs/prd.json", "format": "json" },
+      "id_field": "story_id",
+      "persisted": true,
+      "writer": ["script", "agent"],
+      "reader": ["ralph", "agent"]
+    },
+    "learning": {
+      "description": "Non-obvious pattern discovered during implementation",
+      "storage": { "type": "glob", "pattern": "*/AGENT_LEARNINGS.md", "format": "markdown" },
+      "id_field": "pattern_name",
+      "persisted": true,
+      "writer": ["agent"],
+      "reader": ["agent", "ralph"]
+    },
+    "cross_repo_learning": {
+      "description": "Distilled cross-cutting pattern in the CRLA hub",
+      "storage": { "type": "glob", "pattern": "ai-agents-research/docs/learnings/**/*.md", "format": "markdown" },
+      "id_field": "filename",
+      "persisted": true,
+      "writer": ["agent", "script"],
+      "reader": ["ralph", "agent"]
+    },
+    "rule": {
+      "description": "Always-loaded session constraint promoted from learnings",
+      "storage": { "type": "glob", "pattern": "*/.claude/rules/*.md", "format": "markdown" },
+      "id_field": "filename",
+      "persisted": true,
+      "writer": ["agent", "human"],
+      "reader": ["cc-runtime"]
+    },
+    "skill": {
+      "description": "On-demand reusable capability",
+      "storage": { "type": "glob", "pattern": "*/.claude/skills/*/SKILL.md", "format": "markdown" },
+      "id_field": "skill_name",
+      "persisted": true,
+      "writer": ["agent", "human"],
+      "reader": ["cc-runtime", "agent"]
+    },
+    "memory": {
+      "description": "Per-project CC memory note",
+      "storage": { "type": "glob", "pattern": "~/.claude/projects/*/memory/*.md", "format": "yaml-frontmatter" },
+      "id_field": "filename",
+      "persisted": false,
+      "writer": ["agent", "cc-runtime"],
+      "reader": ["cc-runtime"]
+    },
+    "triage": {
+      "description": "GHA monitor output pending human promotion",
+      "storage": { "type": "glob", "pattern": "ai-agents-research/triage/**/*.md", "format": "markdown" },
+      "id_field": "filename",
+      "persisted": true,
+      "writer": ["gha"],
+      "reader": ["human", "agent"]
+    }
+  },
+  "relationships": [
+    { "from": "plan",               "to": "task",                "type": "spawns",          "cardinality": "1:N", "materialized_in": "contributions.json:repos[].tasks[].plan" },
+    { "from": "task",               "to": "repo",                "type": "targets",         "cardinality": "N:1", "materialized_in": "contributions.json:repos{key}" },
+    { "from": "task",               "to": "task",                "type": "depends_on",      "cardinality": "N:N", "materialized_in": "contributions.json:repos[].tasks[].depends_on" },
+    { "from": "task",               "to": "issue",               "type": "references",      "cardinality": "N:1", "materialized_in": "contributions.json:repos[].tasks[].issue" },
+    { "from": "story",              "to": "repo",                "type": "belongs_to",      "cardinality": "N:1", "materialized_in": "prd.json location within repo" },
+    { "from": "learning",           "to": "repo",                "type": "extracted_from",  "cardinality": "N:1", "materialized_in": "AGENT_LEARNINGS.md location within repo" },
+    { "from": "learning",           "to": "rule",                "type": "promoted_to",     "cardinality": "1:1", "description": "3rd occurrence triggers promotion per compound-learning.md" },
+    { "from": "learning",           "to": "cross_repo_learning", "type": "distilled_into",  "cardinality": "N:1", "materialized_in": "learnings_sync script output" },
+    { "from": "cross_repo_learning","to": "story",               "type": "informs",         "cardinality": "N:N", "materialized_in": "COMPOUND_LEARNINGS_PATH env var injection" },
+    { "from": "triage",             "to": "cross_repo_learning", "type": "feeds",           "cardinality": "N:N", "description": "human promotes triage findings to learnings hub" },
+    { "from": "memory",             "to": "repo",                "type": "scoped_to",       "cardinality": "N:1", "materialized_in": "~/.claude/projects/<hashed-path>/" }
+  ]
+}

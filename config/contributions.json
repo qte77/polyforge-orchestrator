@@ -1,1 +1,109 @@
-{}
+{
+  "$schema": "contributions.schema.json",
+  "version": "1.0.0",
+  "updated": "2026-04-13T00:00:00Z",
+  "plans": {
+    "workspace-audit-apr7-13": {
+      "source": "~/.claude/plans/workspace-activity-audit-apr7-13.md",
+      "title": "Workspace Activity Audit",
+      "scope": "6 repos, 46 tasks",
+      "phase": "phase-1",
+      "started": "2026-04-13",
+      "tracked": true
+    },
+    "pr-sprint-1": {
+      "source": "~/.claude/plans/multi-project-pr-contrib-sprint1.md",
+      "title": "Multi-Project PR Sprint 1",
+      "scope": "21 repos, 5 registries + 16 contributions",
+      "phase": null,
+      "started": null,
+      "tracked": true
+    },
+    "rdi-agentbeats": {
+      "source": "~/.claude/plans/rdi-plan-for-purple-phase.md",
+      "title": "RDI AgentBeats Green+Purple",
+      "scope": "3 competition repos",
+      "phase": "phase-a",
+      "started": "2026-04-13",
+      "tracked": true
+    },
+    "paperverse-prototype": {
+      "source": "~/.claude/plans/paperverse-prototype.md",
+      "title": "Paperverse Prototype",
+      "scope": "1 repo",
+      "phase": null,
+      "started": null,
+      "tracked": false
+    },
+    "superdesign-scaffold": {
+      "source": "~/.claude/plans/superdesign-fork-ralph-tdd-scaffold.md",
+      "title": "Superdesign Fork Scaffold",
+      "scope": "1 repo",
+      "phase": null,
+      "started": null,
+      "tracked": false
+    },
+    "ralphy-offspring": {
+      "source": "~/.claude/plans/ralphy-offspring-self-evolving.md",
+      "title": "Ralphy Offspring Self-Evolving",
+      "scope": "2 repos",
+      "phase": null,
+      "started": null,
+      "tracked": false
+    }
+  },
+  "repos": {
+    "cc-plugins": {
+      "tasks": [
+        { "id": "audit-1a-1", "plan": "workspace-audit-apr7-13", "action": "commit simplify removal branch", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1a-2", "plan": "workspace-audit-apr7-13", "action": "merge PR #117 statusline path fix", "status": "pending", "issue": null, "pr": 117, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1a-3", "plan": "workspace-audit-apr7-13", "action": "delete stale feat/rag-core branch", "status": "pending", "issue": null, "pr": null, "depends_on": ["audit-1a-1"], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1a-4", "plan": "workspace-audit-apr7-13", "action": "drop 7 stale stash entries", "status": "pending", "issue": null, "pr": null, "depends_on": ["audit-1a-1"], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    },
+    "polyforge-orchestrator": {
+      "tasks": [
+        { "id": "audit-1b-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #33 portable workspace refactor", "status": "pending", "issue": null, "pr": 33, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1b-2", "plan": "workspace-audit-apr7-13", "action": "rebase + merge PR #34 contrib infra", "status": "pending", "issue": null, "pr": 34, "depends_on": ["audit-1b-1"], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1b-3", "plan": "workspace-audit-apr7-13", "action": "merge PR #37 learnings-sync", "status": "pending", "issue": null, "pr": 37, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1b-4", "plan": "workspace-audit-apr7-13", "action": "create learnings-ralphy + research-ralphy repos, merge PR #35", "status": "pending", "issue": null, "pr": 35, "depends_on": ["audit-1b-1", "audit-1b-2"], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    },
+    "ai-agents-research": {
+      "tasks": [
+        { "id": "audit-1c-1", "plan": "workspace-audit-apr7-13", "action": "merge docs/url-triage-batch-analysis to main", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "audit-1c-2", "plan": "workspace-audit-apr7-13", "action": "resolve 55 lychee redirects", "status": "pending", "issue": 106, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    },
+    "so101-biolab-automation": {
+      "tasks": [
+        { "id": "audit-1d-1", "plan": "workspace-audit-apr7-13", "action": "delete merged branches", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    },
+    "TheBulletproofProtocol": {
+      "tasks": [
+        { "id": "rdi-a2-1", "plan": "rdi-agentbeats", "action": "register agents on agentbeats.dev", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "rdi-a2-2", "plan": "rdi-agentbeats", "action": "fix BUG-001 evaluator threshold", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
+        { "id": "rdi-a2-3", "plan": "rdi-agentbeats", "action": "fix BUG-002 on_message_send return type", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    },
+    "MAS-GraphJudge": {
+      "tasks": [
+        { "id": "rdi-a3-1", "plan": "rdi-agentbeats", "action": "fix scenario.toml duplicate IDs + missing names", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    },
+    "TestBehaveAlign": {
+      "tasks": [
+        { "id": "rdi-a4-1", "plan": "rdi-agentbeats", "action": "build purple baseline STORY-001 through STORY-006", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+      ]
+    }
+  },
+  "totals": {
+    "pending": 16,
+    "running": 0,
+    "done": 0,
+    "failed": 0,
+    "skipped": 0,
+    "cost_usd": 0
+  }
+}

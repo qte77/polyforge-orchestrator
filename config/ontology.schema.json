@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ontology.schema.json",
+  "title": "qte77 Ecosystem Ontology",
+  "description": "Declares entity types, their storage locations, and relationships across the qte77 multi-repo ecosystem. Used by polyforge scripts to discover, validate, and traverse the entity graph instead of hardcoding paths and conventions.",
+  "type": "object",
+  "required": ["version", "entities", "relationships"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0.0"
+    },
+    "entities": {
+      "type": "object",
+      "description": "Entity type definitions keyed by type name",
+      "additionalProperties": {
+        "$ref": "#/$defs/entityType"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Typed, directed edges between entity types",
+      "items": {
+        "$ref": "#/$defs/relationship"
+      }
+    }
+  },
+  "$defs": {
+    "entityType": {
+      "type": "object",
+      "required": ["description", "storage", "id_field"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "What this entity type represents"
+        },
+        "storage": {
+          "oneOf": [
+            { "$ref": "#/$defs/storageFile" },
+            { "$ref": "#/$defs/storageGlob" },
+            { "$ref": "#/$defs/storageGitHub" }
+          ],
+          "description": "Where instances of this entity live"
+        },
+        "id_field": {
+          "type": "string",
+          "description": "Field or convention that uniquely identifies an instance (e.g. 'owner/repo', 'filename', 'issue_number')"
+        },
+        "persisted": {
+          "type": "boolean",
+          "description": "Whether instances survive container rebuilds (git-tracked = true, ephemeral = false)"
+        },
+        "writer": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["human", "agent", "script", "gha", "cc-runtime"]
+          },
+          "description": "Who creates/updates instances"
+        },
+        "reader": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["human", "agent", "script", "gha", "cc-runtime", "ralph"]
+          },
+          "description": "Who consumes instances"
+        }
+      }
+    },
+    "storageFile": {
+      "type": "object",
+      "required": ["type", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "file" },
+        "path": {
+          "type": "string",
+          "description": "Absolute or workspace-relative path to the file (e.g. 'config/repos.conf')"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "jsonl", "toml", "conf", "markdown"],
+          "description": "File format for parsing"
+        }
+      }
+    },
+    "storageGlob": {
+      "type": "object",
+      "required": ["type", "pattern"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "glob" },
+        "pattern": {
+          "type": "string",
+          "description": "Glob pattern relative to workspace root (e.g. '*/AGENT_LEARNINGS.md', '~/.claude/plans/*.md')"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "markdown", "yaml-frontmatter"],
+          "description": "Format of matched files"
+        }
+      }
+    },
+    "storageGitHub": {
+      "type": "object",
+      "required": ["type", "scope"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "github" },
+        "scope": {
+          "type": "string",
+          "enum": ["issues", "pulls", "releases"],
+          "description": "GitHub API resource type"
+        },
+        "owner": {
+          "type": "string",
+          "description": "GitHub org/user — if omitted, derived from repos.conf entries"
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["from", "to", "type", "cardinality"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Source entity type (key in entities object)"
+        },
+        "to": {
+          "type": "string",
+          "description": "Target entity type (key in entities object)"
+        },
+        "type": {
+          "type": "string",
+          "description": "Relationship verb (e.g. 'spawns', 'targets', 'depends_on', 'extracted_from')"
+        },
+        "cardinality": {
+          "type": "string",
+          "enum": ["1:1", "1:N", "N:1", "N:N"],
+          "description": "Relationship cardinality"
+        },
+        "description": {
+          "type": "string",
+          "description": "How this relationship works in practice"
+        },
+        "materialized_in": {
+          "type": "string",
+          "description": "Which file/field actually stores this link (e.g. 'contributions.json:tasks[].plan', 'prd.json:stories[].depends_on')"
+        }
+      }
+    }
+  }
+}
