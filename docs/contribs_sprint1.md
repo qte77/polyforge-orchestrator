@@ -1,187 +1,151 @@
-# Contribution Sprint 1 — Verified Targets
+# Contribution Sprint 1 — Full Plan
 
-Verified 2026-04-06 by 3 independent agents. Zero discrepancies across all claims.
+21 repos cloned at `/workspaces/external/`, all with upstream remotes. Verified 2026-04-13.
 
-## Tier 1 — Fork + Add to Workflow
+## Registry Submissions (5 repos, low effort)
 
-High alignment, active issues, high visibility. These join the existing 8 as primary contribution targets.
+| Registry | Stars | PR Title | Format | Section |
+| -------- | ----- | -------- | ------ | ------- |
+| VoltAgent/awesome-agent-skills | 14,420 | `Add skill: qte77/cc-utils-plugin` | `- **[qte77/cc-utils-plugin](url)** - desc` | Community Skills |
+| BehiSecc/awesome-claude-skills | 8,411 | `Add claude-code-utils-plugin` | `- [cc-utils-plugin](url) - desc.` | Development & Code Tools |
+| ComposioHQ/awesome-claude-plugins | 1,294 | `Add cc-utils-plugin plugin` | Table row or `- [name](url) - desc` | Developer Productivity |
+| rohitg00/awesome-claude-code-toolkit | 1,228 | `Add cc-utils-plugin plugin` | Table row | All Plugins |
+| jeremylongshore/claude-code-plugins-plus-skills | 1,856 | `Add claude-code-utils-plugin` | YAML in `sources.yaml` | External sync |
 
-| # | Project | Stars | Issues | Category | Entry Point |
-| - | ------- | ----- | ------ | -------- | ----------- |
-| 1 | BayramAnnakov/claude-reflect | 881 | 7 | CC compound learning | Promotion hierarchy, multi-repo sync |
-| 2 | disler/claude-code-hooks-multi-agent-observability | 1,342 | 26 | CC observability | Hook patterns for multi-repo agents |
-| 3 | SWE-bench/SWE-bench | 4,626 | open | Agent evaluation | Test reliability (#545, #530) |
-| 4 | tj-actions/changed-files | 2,684 | open | GHA OBSERVE | Deployment event support (#2631) |
-| 5 | googleapis/release-please | 6,672 | open | GHA DISTRIBUTE | YAML/TOML config (#2710) |
+**Description**: 26 plugins, 45+ skills for TDD, compound learning, context management, multi-repo orchestration. Compatible with Claude Code.
 
-## Existing Targets (8 repos, cloned)
+**Dropped**: ccplugins/awesome-claude-code-plugins (0 merges ever), VoltAgent/awesome-claude-code-subagents (requires agent `.md` file, heavier effort).
 
-| # | Project | Stack | Key Issues | Score |
-| - | ------- | ----- | ---------- | ----- |
-| 1 | CraftsMan-Labs/SimpleAgents | Rust | #23 (complexity CI), #42 (approval), #44 (CC skills) | 4/5 |
-| 2 | richlira/compass-mcp | TypeScript | Tests+CI, list_contexts, agent identity | 4/5 |
-| 3 | Gitlawb/openclaude | TypeScript | #448 (status 0%), #433 (Ollama), #430 (validation) | 5/5 |
-| 4 | patent-dev/epo-ops | Go | #1 (proxy cache), #2 (XML parsing) | 4/5 |
-| 5 | patent-dev/bulk-file-loader | Go | Test coverage, docs | 3/5 |
-| 6 | patent-dev/uspto-odp | Go | Test coverage, docs | 3/5 |
-| 7 | patent-dev/dpma-connect-plus | Go | Test coverage, docs | 3/5 |
-| 8 | patent-dev/epo-bdds | Go | Test coverage, docs | 3/5 |
+## Contribution Targets (14 repos + 2 GHA)
 
-## New Targets — CC Plugins & Orchestration
+### Quick Wins (parallel, all independent)
 
-| # | Project | Stars | Issues | CONTRIBUTING | Score | Entry Point |
-| - | ------- | ----- | ------ | ------------ | ----- | ----------- |
-| 9 | BayramAnnakov/claude-reflect | 881 | 7 | No | 5/5 | Compound learning promotion hierarchy, multi-repo sync |
-| 10 | disler/claude-code-hooks-multi-agent-observability | 1,342 | 26 | No | 4/5 | Hook patterns for multi-repo agent coordination |
-| 11 | patoles/agent-flow | 607 | 16 | Yes | 4/5 | Polyrepo topology visualization |
-| 12 | sangrokjung/claude-forge | 641 | 21 | Yes | 4/5 | Port skills as forge plugins |
+| Repo | Issue | Stack | Branch | Skills | Effort |
+| ---- | ----- | ----- | ------ | ------ | ------ |
+| claude-reflect | #25 pytest CI fix | Python | `contrib/25-ci-pytest-fix` | researching-codebase, python-dev | Trivial |
+| SWE-bench | #472 eval output JSON docs | Python | `contrib/472-eval-output-docs` | researching-codebase, python-dev | Trivial |
 
-## New Targets — Agent Evaluation
+**claude-reflect PR format**: `## Summary` + `## Changes` + `## Test plan`, conventional commit (`ci:`/`fix:`), `Generated with Claude Code` footer.
 
-| # | Project | Stars | Issues | Score | Entry Point |
-| - | ------- | ----- | ------ | ----- | ----------- |
-| 13 | SWE-bench/SWE-bench | 4,626 | #548, #545, #530 | 5/5 | Test reliability (#545, #530) |
-| 14 | multi-swe-bench/multi-swe-bench | 330 | #98, #97, #94, #89, #84 | 4/5 | Data quality (#89, #84), test infra (#97) |
-| 15 | scaleapi/SWE-bench_Pro-os | 335 | #89, #87, #85 | 4/5 | Stale test names (#85), missing file (#87) |
+**SWE-bench PR format**: loose `## Summary`, `Fixes #NNN`, no strict template.
 
-## New Targets — GHA Pipeline
+### Medium — Parallelizable Batch
 
-| # | Project | Stars | Layer | Issues | Score | Entry Point |
-| - | ------- | ----- | ----- | ------ | ----- | ----------- |
-| 16 | tj-actions/changed-files | 2,684 | OBSERVE | #2835, #2631 | 5/5 | Deployment event support (#2631) |
-| 17 | googleapis/release-please | 6,672 | DISTRIBUTE | #2710, #2714 | 5/5 | YAML/TOML config (#2710) |
-| 18 | dorny/paths-filter | 3,051 | OBSERVE | #266, #261 | 4/5 | Any/all boolean (#266) |
-| 19 | softprops/action-gh-release | 5,525 | DISTRIBUTE | #772, #770 | 4/5 | Draft/publish bug (#772) |
+| Repo | Issue | Stack | Branch | Skills | Effort |
+| ---- | ----- | ----- | ------ | ------ | ------ |
+| SimpleAgents | #23 complexity CI | Rust | `contrib/23-complexity-ci` | rust-dev, gha-dev, de-vibing | Low |
+| SimpleAgents | #44 CC skills | Rust | `contrib/44-cc-skills` | rust-dev, researching-codebase | Medium |
+| compass-mcp | Tests+CI+list_contexts | TypeScript | `contrib/tests-ci-list-contexts` | typescript-dev, tdd-core, gha-dev | Medium |
+| epo-ops | #2 XML parsing | Go | `contrib/2-xml-parsing` | go-dev, tdd-core | Low |
+| epo-ops | #1 proxy cache | Go | `contrib/1-version-bump` | go-dev | Low |
+| bulk-file-loader | Test coverage | Go | `contrib/test-coverage` | go-dev, tdd-core | Low |
+| uspto-odp | Test coverage | Go | `contrib/test-coverage` | go-dev, tdd-core | Low |
+| dpma-connect-plus | Test coverage | Go | `contrib/test-coverage` | go-dev, tdd-core | Low |
+| epo-bdds | Test coverage | Go | `contrib/test-coverage` | go-dev, tdd-core | Low |
 
-## Catalog Submissions (low effort, high visibility)
+### Medium-High — Require Full Attention
 
-| # | Project | Stars | Action |
-| - | ------- | ----- | ------ |
-| 20 | VoltAgent/awesome-agent-skills | 14,420 | Submit tdd-core + compound-learning skills |
-| 21 | jeremylongshore/claude-code-plugins-plus-skills | 1,856 | Package for CCPI marketplace |
-| 22 | ccplugins/awesome-claude-code-plugins | 669 | List polyforge + cc-utils-plugin |
+| Repo | Issue | Stack | Branch | Skills | Effort |
+| ---- | ----- | ----- | ------ | ------ | ------ |
+| openclaude | #448 status line 0% | TypeScript | `contrib/448-status-line` | typescript-dev, de-vibing | Low |
+| openclaude | #433 Ollama raw JSON | TypeScript | `contrib/433-ollama-adapter` | typescript-dev, security-audit | Medium |
+| openclaude | #664 Gemini regression | TypeScript | `contrib/664-gemini-regression` | typescript-dev | Medium |
+| agent-flow | #35 SSE viz | TypeScript | `contrib/35-sse-viz` | typescript-dev, tdd-core | Medium |
+| agent-flow | #4 Windows path | TypeScript | `contrib/4-windows-path` | typescript-dev, tdd-core | Low |
+| claude-forge | #19 marketplace schema | Shell | `contrib/19-marketplace-schema` | gha-dev | Medium |
+| claude-forge | #15 hook paths | Shell | `contrib/15-hook-paths` | tdd-core | Medium |
+| multi-swe-bench | #89 data quality | Python | `contrib/89-data-quality` | python-dev | Medium |
+| multi-swe-bench | #97 test infra | Python | `contrib/97-test-infra` | python-dev, tdd-core | Medium |
+| SWE-bench_Pro-os | #85 stale test names | Python | `contrib/85-stale-test-names` | python-dev | Low |
+| SWE-bench_Pro-os | #87 missing file | Python | `contrib/87-missing-file` | python-dev | Trivial |
+| paths-filter | #266 any/all boolean | TypeScript | `contrib/266-any-all-boolean` | typescript-dev, tdd-core, security-audit | Medium |
+| action-gh-release | #772 draft/publish bug | TypeScript | `contrib/772-draft-publish-bug` | typescript-dev, security-audit | Medium-High |
 
-## Sprint 1 Priority
+## Pre-Contribution Checklist (every repo)
+
+1. `/codebase-tools:researching-codebase` — understand structure before touching code
+2. Read CONTRIBUTING.md + PR template (if exists)
+3. `/cc-meta:compacting-context` — after exploration, before coding
+4. Branch on fork (never main)
+5. Strict TDD where applicable
+6. `/code-quality:de-vibing` — before committing (catches AI-generated smells)
+7. Conventional commits + Co-Authored-By
+8. PR to upstream following their conventions
+
+## Merge Patterns
+
+| Project | Template | Key Requirement |
+| ------- | -------- | --------------- |
+| claude-reflect | Summary+Changes+Test plan | Conventional commits, Generated with Claude Code |
+| SWE-bench | Loose Summary, Fixes #NNN | Doc PRs merge fast, harness fixes accepted |
+| openclaude | **Summary/Impact/Testing/Notes (enforced)** | `bun build` + `bun smoke`, state provider tested, small PRs only |
+| SimpleAgents | Branch-name title, CodeRabbit | Update TODO.md, run tests |
+| compass-mcp | None (we set norms) | Be the founding contributor |
+| patent-dev | None (first external PR ever) | Tests + clear rationale |
+| agent-flow | Has CONTRIBUTING.md | Follow their guidelines |
+| claude-forge | Has CONTRIBUTING.md | Follow their guidelines |
+| multi-swe-bench | Standard | Focused fixes |
+| SWE-bench_Pro-os | Standard | Focused fixes |
+| paths-filter | Standard | Well-scoped, one feature per PR |
+| action-gh-release | Standard | Security-sensitive, thorough testing |
+
+## Research Insights to Apply
+
+### Per Target
+
+| Target | Key Insight | Source |
+| ------ | ----------- | ------ |
+| claude-reflect | Use `additionalContext` in PreToolUse for reflection injection | agents-skills/CC-hooks-system-analysis |
+| claude-reflect | Target auto memory layer (MEMORY.md), not CLAUDE.md | context-memory/CC-memory-system-analysis |
+| SWE-bench | Structured output schemas in `-p` mode (v2.1.22) | ci-remote/CC-version-pinning-resilience |
+| SWE-bench | `tmp_path` fixture isolation, `pytest --lf` for pollution | learnings/per-repo/agents-eval |
+| openclaude | OTel has no trace spans — parse raw_stream.jsonl | learnings/cross-repo-digest |
+| openclaude | Worktree+team_name bug documented (issues #38949, #33045) | agents-skills/CC-agent-teams-orchestration |
+| SimpleAgents | CLAUDECODE=1 must be cleared for recursive spawning | agents-skills/CC-ralph-enhancement-research |
+| SimpleAgents | 50K token subprocess tax — use --no-plugins in CI | agents-skills/CC-ralph-enhancement-research |
+| compass-mcp | Teams artifacts ephemeral — parse JSONL not filesystem | learnings/cross-repo-digest |
+| patent-dev | `gh pr edit` broken → use GraphQL mutations | learnings/cross-repo-digest |
+| patent-dev | Pipe-into-while subshell bug (ShellCheck SC2031) | learnings/cross-repo-digest |
+| agent-flow | raw_stream.jsonl event types are the parsing basis | agents-skills/CC-agent-teams-orchestration |
+| claude-forge | Minimal plugin manifest avoids double-fire hook bug | plugins-ecosystem/CC-plugin-packaging-research |
+| paths-filter | CodeQL `actions` language for shell+GHA repos | learnings/cross-repo-digest |
+| action-gh-release | PAT scrubbing: `_main()` + `sed` pipe pattern | learnings/cross-repo-digest |
+
+## Parallelization
 
 ```text
-WEEK 1 — Trust builders (parallel)
-├── openclaude #448 (status line bug, small focused fix)
-├── SimpleAgents: add PR template + #23 (complexity CI)
-├── compass-mcp: vitest + CI + list_contexts
-├── epo-ops #2 (XML parsing, proposed fix exists)
-├── claude-reflect: compound learning promotion hierarchy [TIER 1]
-├── hooks-observability: pick from 26 open issues [TIER 1]
-└── Catalog: submit to VoltAgent + ccplugins (visibility)
+Batch A (all independent, start simultaneously):
+├── claude-reflect #25
+├── SWE-bench #472
+├── Registry: 5 README/YAML edits
+├── patent-dev: 5 Go repos test coverage
+└── SWE-bench_Pro-os #87 (trivial)
 
-WEEK 2 — High value
-├── openclaude #433 (Ollama tool calling)
-├── SWE-bench #545 (test reliability) [TIER 1]
-├── multi-swe-bench #89 (data quality)
-├── tj-actions/changed-files #2631 (deployment events) [TIER 1]
-└── googleapis/release-please #2710 (yaml config) [TIER 1]
+Batch B (after Batch A learnings):
+├── SimpleAgents #23
+├── compass-mcp tests+CI
+├── epo-ops #2 XML parsing
+├── agent-flow #4 Windows path
+└── SWE-bench_Pro-os #85
 
-WEEK 3 — Strategic
-├── SimpleAgents #44 (CC skills interop)
-├── compass-mcp agent identity + multi-workspace
-├── disler/hooks-observability (pick from 26 issues)
-└── sangrokjung/claude-forge (port skills)
+Batch C (require full attention, sequential):
+├── openclaude #448, #433, #664 (strict review, one at a time)
+├── SimpleAgents #44 (after #23 triage)
+├── paths-filter #266
+└── action-gh-release #772 (security-sensitive)
+
+Batch D (medium-high, parallel where independent):
+├── agent-flow #35 SSE viz
+├── claude-forge #19, #15
+└── multi-swe-bench #89, #97
 ```
-
-## Merge Patterns (how to get PRs accepted)
-
-| Project | Template | Strategy | Key Requirement |
-| ------- | -------- | -------- | --------------- |
-| openclaude | Summary/Impact/Testing/Notes | Small focused fixes only | `bun run build` + `bun run smoke`, state provider tested |
-| SimpleAgents | None (use CONTRIBUTING.md) | Branch-name title, CodeRabbit summaries | Update TODO.md, run tests |
-| compass-mcp | None | Direct to main (we set the norms) | Be the founding contributor |
-| patent-dev | None | Direct to main (first PR ever) | Tests + clear rationale |
-| SWE-bench | Standard | Focused fixes | Harness test coverage |
-| tj-actions | Standard | Feature PRs welcome | Well-scoped, one feature per PR |
-| release-please | Standard | Google CLA required | Sign CLA first |
-
-## Deferred TODOs
-
-### BayramAnnakov/claude-reflect
-
-- [ ] #25 — pytest not found in CI (quick win, planned)
-- [ ] Review + improve PR #26 — CLAUDE_PLUGIN_ROOT fallback (fixes #17)
-- [ ] PR #27 — SessionEnd hook (stalled 3 weeks, revive + add tests)
-- [ ] Multi-project reflection aggregation — reflect across repos not just one (strategic)
-
-### SWE-bench/SWE-bench
-
-- [ ] #472 — clarify eval output JSON docs (quick win, planned)
-- [ ] #474 — check_fail_only evaluates fatal errors as resolved (bug fix, no competing PR)
-- [ ] #410 — clarify patch_is_None vs patch_exists (docs)
-- [ ] #502 — missing django-7530 test case (dataset fix)
-- [ ] #513 — matplotlib large UID files breaking podman (bug fix)
-
-### disler/claude-code-hooks-multi-agent-observability
-
-Demoted — 0 PRs ever merged, 15 stalled. Adopt patterns instead of contributing upstream.
-See qte77/Agents-eval#104, #105, #106 for our approach (extract into cc-meta skill).
-
-### tj-actions/changed-files
-
-Demoted — solo maintainer ignores external PRs for months.
-
-- [ ] #2839 — newline separator option (if maintainer becomes responsive)
-
-### googleapis/release-please
-
-Demoted — Google CLA + 20 stalled external PRs.
-
-- [ ] #2696 — `||` vs `??` for header/footer (one-line fix, if CLA signed)
-
-### CraftsMan-Labs/SimpleAgents
-
-- [ ] Add PR template (low-hanging, builds trust)
-- [ ] #23 — cyclomatic complexity CI setup (quick win)
-- [ ] #42 — human-in-the-loop approval system (high value, Rust)
-- [ ] #44 — agentic skills for CC/codex/opencode (strategic, CC skills interop)
-
-### richlira/compass-mcp
-
-- [ ] Tests + CI (vitest + GHA pipeline, founding contributor)
-- [ ] `list_contexts` tool (obvious missing feature)
-- [ ] Agent identity + multi-workspace (strategic, office-forge coordination)
-
-### Gitlawb/openclaude
-
-- [ ] #448 — status line always 0% (small focused fix)
-- [ ] #433 — Ollama tool calling outputs raw JSON (provider bug)
-- [ ] #430 — tool call validation strict mode (provider bug)
-- [ ] Review/champion auriti PRs #268/#258 (strip Anthropic params from 3P)
-
-### patent-dev/epo-ops
-
-- [ ] #2 — XML parsing bug (well-documented, proposed fix exists)
-- [ ] #1 — Go module proxy cache (needs version bump)
-- [ ] Add CONTRIBUTING.md + PR template
-
-### patent-dev (cross-repo: bulk-file-loader, uspto-odp, dpma-connect-plus, epo-bdds)
-
-- [ ] Add test suites across all 4 repos
-- [ ] Add CONTRIBUTING.md + CI workflows
-- [ ] Cross-library consistency audit
-
-### patoles/agent-flow
-
-- [ ] SSE visualization bugs (#35)
-- [ ] Subagent rendering (#31)
-- [ ] Polyrepo topology visualization (strategic)
-
-### sangrokjung/claude-forge
-
-- [ ] Marketplace schema bugs (#19)
-- [ ] Hook naming/path failures (#15)
-- [ ] Port cc-utils-plugin skills as forge plugins
 
 ## Workflow
 
 All contributions follow fork-first:
 
-1. Branch on our fork (never push to main)
+1. Branch on our fork (never push to main, even if upstream does)
 2. Strict TDD (Red-Green-Refactor)
-3. Conventional commits
+3. Conventional commits with Co-Authored-By
 4. PR to upstream following their template/conventions
+5. Delete fork after merge (attribution survives)
