@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contributions.schema.json",
+  "title": "Contributions State",
+  "description": "Cross-project task state for polyforge-orchestrator. Machine-written by cc-parallel.sh, read for --resume. The bridge between ephemeral plans and persistent git-tracked state.",
+  "type": "object",
+  "required": ["version", "updated", "plans", "repos", "totals"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0.0",
+      "description": "Schema version for forward compatibility"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last write timestamp (ISO 8601)"
+    },
+    "plans": {
+      "type": "object",
+      "description": "Index of plans — persists metadata from ephemeral ~/.claude/plans/ files so they survive container rebuilds",
+      "additionalProperties": {
+        "$ref": "#/$defs/plan"
+      }
+    },
+    "repos": {
+      "type": "object",
+      "description": "Per-repo task lists keyed by display name from repos.conf",
+      "additionalProperties": {
+        "$ref": "#/$defs/repoEntry"
+      }
+    },
+    "totals": {
+      "$ref": "#/$defs/totals"
+    }
+  },
+  "$defs": {
+    "plan": {
+      "type": "object",
+      "required": ["source", "title", "phase", "tracked"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Path to plan file (may be ephemeral ~/.claude/plans/ path)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable plan name"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Brief scope summary (e.g. '6 repos, 46 tasks')"
+        },
+        "phase": {
+          "type": ["string", "null"],
+          "description": "Current phase identifier (e.g. 'phase-1', 'batch-a') or null if not started"
+        },
+        "started": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Date work began (ISO 8601 date) or null"
+        },
+        "tracked": {
+          "type": "boolean",
+          "description": "Whether this plan is actively feeding tasks into repos"
+        }
+      }
+    },
+    "repoEntry": {
+      "type": "object",
+      "required": ["tasks"],
+      "additionalProperties": false,
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": ["id", "action", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique task identifier (e.g. 'audit-1a-1', 'sprint1-registry-voltagent')"
+        },
+        "plan": {
+          "type": ["string", "null"],
+          "description": "Key into plans object — which plan spawned this task"
+        },
+        "action": {
+          "type": "string",
+          "description": "What to do (imperative, concise)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "done", "failed", "skipped"],
+          "description": "Task lifecycle state"
+        },
+        "issue": {
+          "type": ["integer", "null"],
+          "description": "GitHub issue number (if task maps to an issue)"
+        },
+        "pr": {
+          "type": ["integer", "null"],
+          "description": "GitHub PR number (if task produced or targets a PR)"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Task IDs that must be 'done' before this task can run"
+        },
+        "last_run": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Timestamp of last execution attempt"
+        },
+        "cost_usd": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "API cost for this task's last run"
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message if status is 'failed'"
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "required": ["pending", "running", "done", "failed", "skipped", "cost_usd"],
+      "additionalProperties": false,
+      "properties": {
+        "pending":  { "type": "integer", "minimum": 0 },
+        "running":  { "type": "integer", "minimum": 0 },
+        "done":     { "type": "integer", "minimum": 0 },
+        "failed":   { "type": "integer", "minimum": 0 },
+        "skipped":  { "type": "integer", "minimum": 0 },
+        "cost_usd": { "type": "number", "minimum": 0 }
+      }
+    }
+  }
+}
