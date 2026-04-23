@@ -4,7 +4,9 @@ SHELL := /bin/bash
 .PHONY: \
 	help setup_all setup_repos setup_vscode setup_gh_auth setup_claude_code \
 	setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
-	generate_tasks clone_repos
+	generate_tasks clone_repos \
+	contrib_setup contrib_triage contrib_implement contrib_review \
+	contrib_status contrib_cleanup
 .DEFAULT_GOAL := help
 
 # Source colors for all recipes
@@ -139,6 +141,52 @@ generate_tasks:  ## Generate workspace.code-workspace from config/repos.conf
 	$(_src_colors)
 	info "Generating vscode tasks..."
 	bash scripts/generate-tasks.sh
+
+
+# MARK: CONTRIB
+
+
+contrib_setup:  ## Fork + clone external contribution repos
+	$(_src_colors)
+	info "Setting up contribution repos (fork + clone + upstream)..."
+	bash scripts/clone-repos.sh
+	success "Contribution repos ready"
+
+contrib_triage:  ## Triage issues across contribution repos
+	$(_src_colors)
+	info "Launching triage agents..."
+	bash scripts/cc-parallel.sh --preset contribute --mode triage
+
+contrib_implement:  ## Run TDD implementation agents on contribution repos
+	$(_src_colors)
+	info "Launching implementation agents..."
+	bash scripts/cc-parallel.sh --preset contribute --mode implement
+
+contrib_review:  ## Run review agents on contribution repos
+	$(_src_colors)
+	info "Launching review agents..."
+	bash scripts/cc-parallel.sh --preset contribute --mode review
+
+contrib_status:  ## Show contribution dashboard (forks, branches, PRs)
+	$(_src_colors)
+	bash scripts/contrib-status.sh
+
+contrib_cleanup:  ## Prune worktrees and stale contribution branches
+	$(_src_colors)
+	source scripts/load-workspace-repos.sh
+	for i in $${!GH_REPOS[@]}; do \
+		[[ "$${FORK_FLAGS[$$i]:-}" != "fork" ]] && continue; \
+		path="$${REPOS[$$((i+1))]}"; \
+		[[ -d "$$path/.git" ]] || continue; \
+		name="$${REPO_NAMES[$$((i+1))]}"; \
+		info "$$name: pruning worktrees..."; \
+		git -C "$$path" worktree prune 2>/dev/null || true; \
+		wt_dir="$${path}-worktrees"; \
+		if [[ -d "$$wt_dir" ]] && [[ -z "$$(ls -A "$$wt_dir" 2>/dev/null)" ]]; then \
+			rmdir "$$wt_dir" 2>/dev/null || true; \
+		fi; \
+	done
+	success "Cleanup complete"
 
 
 # MARK: HELP
