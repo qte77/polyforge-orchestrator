@@ -1,82 +1,52 @@
-# polyforge
+<!-- markdownlint-disable MD033 -->
+# polyforge-orchestrator
 
-Polyrepo dev forge for parallel AI agent workflows across multiple repositories.
+Orchestrate parallel AI coding agents across
+a polyrepo codebase from a single Codespace
+or devcontainer.
 
-> **USP**: Orchestrate AI coding agents across N repos in parallel — unified credentials, status, and execution from one place.
->
-> **ICP**: Solo devs and small teams running AI agents (Claude Code, Cursor) across a polyrepo codebase in Codespaces/devcontainers.
->
-> **CTA**: `./scripts/cc-parallel.sh --preset validate` — validate all your repos in one command.
+**For** teams running Claude Code (or other AI agents)
+across multiple repos simultaneously.
+**Run** `./scripts/cc-parallel.sh --preset validate`
+to validate all repos in one command.
 
 ## Quick Start
 
-### VS Code Multi-Root Workspace
-
 ```bash
-code workspace.code-workspace    # All repos in sidebar + auto-terminal panes
+./scripts/cc-parallel.sh --preset validate
+./scripts/cc-parallel.sh --preset security
+./scripts/cc-status.sh
 ```
 
-### Parallel AI Agent Execution
+Repos: edit `config/repos.conf`. Credentials:
+set `GH_PAT` as Codespace secret.
 
-```bash
-./scripts/cc-parallel.sh --preset status     # Git status across all repos
-./scripts/cc-parallel.sh --preset validate   # Run make validate everywhere
-./scripts/cc-parallel.sh --preset security   # Security audit all repos
-./scripts/cc-parallel.sh "Check for TODO comments" /workspaces/Agents-eval
-```
+<details>
+  <summary>Workspace preview — multi-repo IDE layout with parallel terminals</summary>
+  <img alt="polyforge-orchestrator workspace"
+    src="assets/images/polyforge.svg"
+    width="100%">
+</details>
 
-### tmux Sessions
+## How It Works
 
-```bash
-./scripts/cc-repos.sh          # One tmux window per repo
-```
+On codespace creation (`make setup_all`), polyforge installs
+shared tooling (Claude Code, RTK, lychee, markdownlint),
+clones all repos from `config/repos.conf`, and generates
+`workspace.code-workspace` with terminal tasks per repo.
 
-### Status Dashboard
+On attach (`make setup_repos`), it reads each repo's
+`devcontainer.json` and runs their `onCreateCommand` +
+`postCreateCommand` inside the host container — bridging
+the gap where multi-root workspaces only run the host
+container's devcontainer lifecycle.
 
-```bash
-./scripts/cc-status.sh             # Branch, status, Ralph state per repo
-./scripts/cc-status.sh --verbose   # Include uncommitted file list
-```
-
-### Credential Setup
-
-```bash
-./scripts/cc-credential-setup.sh   # Unify git credentials, clean embedded PATs
-```
-
-## Configuration
-
-### Repo List
-
-Edit `scripts/repos.conf` to add/remove managed repos. All scripts source this single file.
-
-### Environment
-
-Copy `.env.example` to `.env` and fill in credentials. Scripts source `config/env-loader.sh` which resolves from `.env` -> `~/.gh_pat` -> env vars.
-
-Best long-term approach: Codespaces encrypted secrets via `containerEnv` in `devcontainer.json`.
-
-### Claude Code Settings
-
-See `config/settings.user.json` for a reference template. Key pattern: `additionalDirectories` + `allowWrite` at user level covers all repos without per-project config.
-
-### Cloud Execution (CC Web)
-
-```bash
-# Fire-and-forget cloud sessions — no terminal keep-alive needed
-claude --remote "Run make validate" --repo github.com/qte77/Agents-eval
-claude --remote "Run make validate" --repo github.com/qte77/RAPID-spec-forge
-
-# Monitor from anywhere
-/tasks                         # In Claude Code terminal
-# Or: claude.ai/code, Claude mobile app
-```
-
-See `docs/cc-web-cloud-workflows.md` for the full local-to-cloud adaptation guide.
+Terminal tasks auto-open via `runOn: folderOpen` in both
+VS Code Desktop and Web.
 
 ## Docs
 
-- `docs/cc-web-cloud-workflows.md` — Adapting polyforge for CC Web cloud execution
-- `docs/cross-repo-setup.md` — additionalDirectories + allowWrite pattern
-- `docs/sandbox-friction.md` — 4 friction points with mitigations
-- `docs/settings-consolidation.md` — DRY: user-level as single source of truth
+- [Codespaces](docs/codespaces.md) — rebuild, secrets, management
+- [Cross-repo setup](docs/cross-repo-setup.md) — auth, sandbox, settings
+- [Cloud workflows](docs/cc-web-cloud-workflows.md) — remote execution
+- [Sandbox friction](docs/sandbox-friction.md) — known issues, mitigations

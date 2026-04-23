@@ -1,6 +1,13 @@
 .env
 *.log
-# Sandbox device nodes (denyWithinAllow artifacts)
+workspace.code-workspace
+node_modules/
+
+# CC runtime artifacts (deployed by plugin + dotfiles)
+.claude/
+settings.local.json
+
+# CC Sandbox device nodes (denyWithinAllow artifacts)
 HEAD
 hooks
 objects

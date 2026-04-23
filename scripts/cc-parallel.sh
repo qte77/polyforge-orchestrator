@@ -5,29 +5,26 @@
 #
 # Options:
 #   --max-turns N      Max conversation turns per repo (default: 10)
-#   --max-budget N     Max USD budget per repo (default: 2.0)
 #   --output-dir DIR   Directory for result files (default: mktemp)
 #   --preset NAME      Use a predefined prompt+repo combination
 #
 # Presets:
 #   validate    — Run `make validate` on all repos that have a Makefile
-#   status      — Report git status and recent changes
 #   security    — Audit for security issues
 #
 # Examples:
 #   ./cc-parallel.sh "Run make validate" /workspaces/Agents-eval /workspaces/qte77/RAPID-spec-forge
 #   ./cc-parallel.sh --preset validate
-#   ./cc-parallel.sh --max-budget 1.0 "Check for TODO comments" /workspaces/Agents-eval
+#   ./cc-parallel.sh "Check for TODO comments" /workspaces/Agents-eval
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/../config/env-loader.sh"
-source "${SCRIPT_DIR}/repos.conf"
+source "${SCRIPT_DIR}/load-workspace-repos.sh"
+source "${SCRIPT_DIR}/colors.sh"
 
 # Defaults
 MAX_TURNS=10
-MAX_BUDGET="2.0"
 OUTPUT_DIR=""
 PROMPT=""
 PRESET=""
@@ -42,12 +39,11 @@ usage() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --max-turns) MAX_TURNS="$2"; shift 2 ;;
-    --max-budget) MAX_BUDGET="$2"; shift 2 ;;
     --output-dir) OUTPUT_DIR="$2"; shift 2 ;;
     --preset) PRESET="$2"; shift 2 ;;
     --help|-h) usage ;;
     -*)
-      echo "Unknown option: $1" >&2
+      error "Unknown option: $1"
       usage
       ;;
     *)
@@ -69,12 +65,6 @@ case "$PRESET" in
       [[ -f "$repo/Makefile" ]] && TARGET_REPOS+=("$repo")
     done
     ;;
-  status)
-    PROMPT="Report: 1) current branch, 2) git status (clean/dirty), 3) last 3 commit subjects, 4) any uncommitted changes summary."
-    TARGET_REPOS=("${REPOS[@]}")
-    MAX_TURNS=3
-    MAX_BUDGET="0.50"
-    ;;
   security)
     PROMPT="Audit this repo for security issues: hardcoded secrets, insecure dependencies, OWASP top 10 vulnerabilities. Report findings with severity (critical/high/medium/low) and file locations."
     TARGET_REPOS=("${REPOS[@]}")
@@ -84,18 +74,18 @@ case "$PRESET" in
     # No preset, need prompt and repos from args
     ;;
   *)
-    echo "Unknown preset: $PRESET" >&2
+    error "Unknown preset: $PRESET"
     usage
     ;;
 esac
 
 if [[ -z "$PROMPT" ]]; then
-  echo "Error: No prompt provided." >&2
+  error "No prompt provided."
   usage
 fi
 
 if [[ ${#TARGET_REPOS[@]} -eq 0 ]]; then
-  echo "Error: No repos specified." >&2
+  error "No repos specified."
   usage
 fi
 
@@ -105,12 +95,11 @@ if [[ -z "$OUTPUT_DIR" ]]; then
 fi
 mkdir -p "$OUTPUT_DIR"
 
-echo "=== CC Parallel Runner ==="
-echo "Prompt:     ${PROMPT:0:80}$([ ${#PROMPT} -gt 80 ] && echo '...')"
-echo "Repos:      ${#TARGET_REPOS[@]}"
-echo "Max turns:  $MAX_TURNS"
-echo "Max budget: \$${MAX_BUDGET}/repo"
-echo "Output:     $OUTPUT_DIR"
+info "=== CC Parallel Runner ==="
+info "Prompt:     ${PROMPT:0:80}$([ ${#PROMPT} -gt 80 ] && echo '...')"
+info "Repos:      ${#TARGET_REPOS[@]}"
+info "Max turns:  $MAX_TURNS"
+info "Output:     $OUTPUT_DIR"
 echo ""
 
 # Track PIDs for wait
@@ -119,7 +108,7 @@ declare -A PIDS
 # Launch parallel claude instances
 for repo in "${TARGET_REPOS[@]}"; do
   if [[ ! -d "$repo" ]]; then
-    echo "Warning: $repo not found, skipping"
+    warn "$repo not found, skipping"
     continue
   fi
 
@@ -127,7 +116,7 @@ for repo in "${TARGET_REPOS[@]}"; do
   outfile="${OUTPUT_DIR}/${name}.json"
   logfile="${OUTPUT_DIR}/${name}.log"
 
-  echo "Starting: $name"
+  info "Starting: $name"
 
   (
     cd "$repo"
@@ -140,7 +129,7 @@ for repo in "${TARGET_REPOS[@]}"; do
 done
 
 echo ""
-echo "Waiting for ${#PIDS[@]} instances..."
+info "Waiting for ${#PIDS[@]} instances..."
 echo ""
 
 # Collect results
@@ -174,10 +163,14 @@ for name in "${!PIDS[@]}"; do
 done
 
 echo ""
-echo "=== Summary ==="
-echo "Total repos:    ${#PIDS[@]}"
-echo "Failures:       $FAILURES"
-echo "Total cost:     \$${TOTAL_COST}"
-echo "Results in:     $OUTPUT_DIR"
+info "=== Summary ==="
+info "Total repos:    ${#PIDS[@]}"
+if [[ "$FAILURES" -gt 0 ]]; then
+  error "Failures:       $FAILURES"
+else
+  success "Failures:       $FAILURES"
+fi
+info "Total cost:     \$${TOTAL_COST}"
+info "Results in:     $OUTPUT_DIR"
 
 exit "$FAILURES"

@@ -1,7 +1,10 @@
-# polyforge
+# polyforge-orchestrator
 
-Polyrepo dev forge for parallel AI agent workflows. See `README.md` for usage.
+Orchestrate parallel AI coding agents across a polyrepo codebase. See `README.md` for usage.
 
-Scripts in `scripts/` manage all repos listed in `scripts/repos.conf`.
-Config in `config/` handles auth and environment loading.
+Scripts in `scripts/` manage all repos listed in `config/repos.conf` (single source of truth).
+Config in `config/` handles repo list, keybindings, and environment loading.
 Docs in `docs/` cover CC settings patterns and sandbox friction mitigations.
+
+Setup: `onCreateCommand` runs `make setup_all` (shared tooling + clone + workspace gen).
+`postAttachCommand` runs `make setup_repos` (each repo's devcontainer setup in host container).

@@ -1,5 +1,5 @@
 {
-  "name": "polyforge",
+  "name": "polyforge-orchestrator",
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
@@ -28,14 +28,17 @@
         "dotfiles.repository": "qte77/dotfiles",
         "dotfiles.installCommand": "install.sh",
         "dotfiles.targetPath": "~/dotfiles",
-        "makefile.configureOnOpen": false
+        "makefile.configureOnOpen": false,
+        "task.allowAutomaticTasks": "on"
       }
     }
   },
   "containerEnv": {
     "GH_PAT": "${localEnv:GH_PAT}",
-    "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}"
+    "GH_TOKEN": "${localEnv:GH_PAT}",
+    "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}",
+    "RTK_TELEMETRY_DISABLED": "1"
   },
-  "onCreateCommand": "sudo apt-get install -y tmux 2>/dev/null; bash .devcontainer/clone-repos.sh; bash scripts/generate-workspace.sh",
-  "postAttachCommand": "bash scripts/cc-repos.sh || true"
+  "onCreateCommand": "make setup_all",
+  "postAttachCommand": "make setup_repos"
 }
