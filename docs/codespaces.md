@@ -83,6 +83,52 @@ Set `GH_PAT` scopes to cover `gh` and `git` operations.
 Codespace management (`rebuild`, `stop`, etc.) uses the
 default `GITHUB_TOKEN` unless `GH_PAT` includes `codespace`.
 
+## Token precedence — what wins when multiple are set
+
+When more than one credential source is present, both `gh` and `git`
+follow this precedence:
+
+1. **`GITHUB_TOKEN`** env var — wins outright if set
+2. **`GH_TOKEN`** env var — wins over hosts.yml
+3. **hosts.yml OAuth token** — used only when neither env var is set
+
+The trap: `GITHUB_TOKEN` or `GH_TOKEN` set in your environment
+**silently shadows** the hosts.yml OAuth token. If the env-var token has
+narrower scope than the OAuth one, cross-repo writes can fail with `403`
+even though `gh auth status` looks healthy.
+
+### Convention: `GH_PAT` as the named override
+
+Standardize on a single named env var, `GH_PAT`, as the *intentional*
+override. `containerEnv` in `.devcontainer/devcontainer.json` already
+forwards it and aliases `GH_TOKEN=${localEnv:GH_PAT}`:
+
+```json
+"containerEnv": {
+    "GH_PAT": "${localEnv:GH_PAT}",
+    "GH_TOKEN": "${localEnv:GH_PAT}"
+}
+```
+
+When you want write access through a fine-grained PAT, set `GH_PAT` in
+your local environment. Everything else flows from there. No need to set
+`GITHUB_TOKEN` or `GH_TOKEN` directly.
+
+### Escape hatch: explicitly drop env precedence
+
+When env-var precedence must be dropped (e.g. third-party install
+scripts that fight your token), prefix the command with explicit
+clearing:
+
+```bash
+GITHUB_TOKEN= GH_TOKEN= some-command
+```
+
+This is already the canonical pattern in `Makefile`'s `setup_rtk`
+target — see lines around the `curl … rtk install.sh` invocation. Use
+it as the example when documenting any new automation that must run
+under a different token (or no token at all).
+
 ## Ports and Forwarding
 
 ```bash
