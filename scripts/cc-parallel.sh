@@ -28,6 +28,7 @@ MAX_TURNS=10
 OUTPUT_DIR=""
 PROMPT=""
 PRESET=""
+BARE=""
 TARGET_REPOS=()
 
 usage() {
@@ -41,6 +42,7 @@ while [[ $# -gt 0 ]]; do
     --max-turns) MAX_TURNS="$2"; shift 2 ;;
     --output-dir) OUTPUT_DIR="$2"; shift 2 ;;
     --preset) PRESET="$2"; shift 2 ;;
+    --bare) BARE="--bare"; shift ;;
     --help|-h) usage ;;
     -*)
       error "Unknown option: $1"
@@ -122,7 +124,7 @@ for repo in "${TARGET_REPOS[@]}"; do
     cd "$repo"
     claude -p "$PROMPT" \
       --output-format json \
-      --max-turns "$MAX_TURNS" \
+      --max-turns "$MAX_TURNS" ${BARE} \
       > "$outfile" 2>"$logfile"
   ) &
   PIDS[$name]=$!
