@@ -32,10 +32,12 @@ setup_all:  ## Run all setup steps (non-fatal: failures warn, don't abort)
 	done
 	success "Setup complete"
 
-setup_gh_auth:  ## Configure gh as git credential helper (uses GH_TOKEN from containerEnv)
+setup_gh_auth:  ## Configure gh as git credential helper + durable GPG signing config
 	$(_src_colors)
 	if command -v gh > /dev/null 2>&1; then gh auth setup-git; \
 	else warn "gh cli not installed. skipping auth."; fi
+	git config --global commit.gpgsign true
+	git config --global gpg.format openpgp
 
 setup_claude_code:  ## Setup claude code CLI
 	$(_src_colors)
