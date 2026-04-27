@@ -7,9 +7,14 @@
   "required": ["version", "updated", "plans", "repos", "totals"],
   "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Self-reference to schema file"
+    },
     "version": {
-      "const": "1.0.0",
-      "description": "Schema version for forward compatibility"
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver) for forward compatibility"
     },
     "updated": {
       "type": "string",
@@ -128,6 +133,10 @@
         "error": {
           "type": ["string", "null"],
           "description": "Error message if status is 'failed'"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Free-form context: blockers, defer conditions, awaiting-input details, or any task-level annotation"
         }
       }
     },

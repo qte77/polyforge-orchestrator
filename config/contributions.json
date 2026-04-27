@@ -1,13 +1,13 @@
 {
   "$schema": "contributions.schema.json",
-  "version": "1.0.0",
-  "updated": "2026-04-14T00:00:00Z",
+  "version": "1.1.0",
+  "updated": "2026-04-27T00:00:00Z",
   "plans": {
     "workspace-audit-apr7-13": {
       "source": "~/.claude/plans/workspace-activity-audit-apr7-13.md",
       "title": "Workspace Activity Audit",
-      "scope": "6 repos, 46 tasks",
-      "phase": "phase-1",
+      "scope": "6 repos, Phase 2 follow-through",
+      "phase": "phase-2",
       "started": "2026-04-13",
       "tracked": true
     },
@@ -55,55 +55,77 @@
   "repos": {
     "qte77/claude-code-plugins": {
       "tasks": [
-        { "id": "audit-1a-1", "plan": "workspace-audit-apr7-13", "action": "commit simplify removal branch", "status": "done", "issue": null, "pr": 119, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null },
-        { "id": "audit-1a-2", "plan": "workspace-audit-apr7-13", "action": "merge PR #117 statusline path fix", "status": "done", "issue": null, "pr": 117, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null },
-        { "id": "audit-1a-3", "plan": "workspace-audit-apr7-13", "action": "delete stale feat/rag-core branch", "status": "done", "issue": null, "pr": null, "depends_on": ["audit-1a-1"], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null },
-        { "id": "audit-1a-4", "plan": "workspace-audit-apr7-13", "action": "drop 7 stale stash entries", "status": "skipped", "issue": null, "pr": null, "depends_on": ["audit-1a-1"], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": "local-only operation, not verifiable via GitHub API" }
+        { "id": "audit-1a-1", "plan": "workspace-audit-apr7-13", "action": "commit simplify removal branch", "status": "done", "issue": null, "pr": 119, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1a-2", "plan": "workspace-audit-apr7-13", "action": "merge PR #117 statusline path fix", "status": "done", "issue": null, "pr": 117, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1a-3", "plan": "workspace-audit-apr7-13", "action": "delete stale feat/rag-core branch", "status": "done", "issue": null, "pr": null, "depends_on": ["audit-1a-1"], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1a-4", "plan": "workspace-audit-apr7-13", "action": "drop 7 stale stash entries", "status": "skipped", "issue": null, "pr": null, "depends_on": ["audit-1a-1"], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": "local-only operation, not verifiable via GitHub API", "note": null },
+        { "id": "audit-1a-5", "plan": "workspace-audit-apr7-13", "action": "evaluate Graphify/RepoWise/Code-Review-Graph for skill dependency graph", "status": "pending", "issue": 101, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "comparative evaluation; no implementation until decision (P2)" },
+        { "id": "audit-1a-6", "plan": "workspace-audit-apr7-13", "action": "implement goals.json as bigpicture data source + Goal Progress output", "status": "pending", "issue": 48, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "blocker RAPID-spec-forge#5 closed 2026-04-26; ready to start (P4)" }
       ]
     },
     "qte77/polyforge-orchestrator": {
       "tasks": [
-        { "id": "audit-1b-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #33 portable workspace refactor", "status": "pending", "issue": null, "pr": 33, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
-        { "id": "audit-1b-2", "plan": "workspace-audit-apr7-13", "action": "rebase + merge PR #34 contrib infra", "status": "pending", "issue": null, "pr": 34, "depends_on": ["audit-1b-1"], "last_run": null, "cost_usd": null, "error": null },
-        { "id": "audit-1b-3", "plan": "workspace-audit-apr7-13", "action": "merge PR #37 learnings-sync", "status": "pending", "issue": null, "pr": 37, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
-        { "id": "audit-1b-4", "plan": "workspace-audit-apr7-13", "action": "create learnings-ralphy + research-ralphy repos, merge PR #35", "status": "pending", "issue": null, "pr": 35, "depends_on": ["audit-1b-1", "audit-1b-2"], "last_run": null, "cost_usd": null, "error": null }
+        { "id": "audit-1b-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #33 portable workspace refactor", "status": "pending", "issue": null, "pr": 33, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1b-2", "plan": "workspace-audit-apr7-13", "action": "rebase + merge PR #34 contrib infra", "status": "pending", "issue": null, "pr": 34, "depends_on": ["audit-1b-1"], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1b-3", "plan": "workspace-audit-apr7-13", "action": "merge PR #37 learnings-sync", "status": "pending", "issue": null, "pr": 37, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1b-4", "plan": "workspace-audit-apr7-13", "action": "create learnings-ralphy + research-ralphy repos, merge PR #35", "status": "pending", "issue": null, "pr": 35, "depends_on": ["audit-1b-1", "audit-1b-2"], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1b-5", "plan": "workspace-audit-apr7-13", "action": "wire cc-parallel.sh --preset contribute per docs/subagent-dispatch.md", "status": "pending", "issue": 47, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "load-bearing for pr-sprint-1 activation; per-repo harness inheritance + user-confirmation gate (P5)" },
+        { "id": "sprint1-activate", "plan": "pr-sprint-1", "action": "activate Sprint 1: populate 21-repo task tree per plan file + fan out Batch A via cc-parallel.sh --preset contribute", "status": "pending", "issue": null, "pr": null, "depends_on": ["audit-1b-5"], "last_run": null, "cost_usd": null, "error": null, "note": "P6; gated on P5 (audit-1b-5). On activation: set pr-sprint-1 phase to 'phase-1-batch-a', started to current date, expand 21 per-repo tasks per ~/.claude/plans/multi-project-pr-contrib-sprint1.md" }
       ]
     },
     "qte77/ai-agents-research": {
       "tasks": [
-        { "id": "audit-1c-1", "plan": "workspace-audit-apr7-13", "action": "merge docs/url-triage-batch-analysis to main", "status": "done", "issue": null, "pr": 95, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null },
-        { "id": "audit-1c-2", "plan": "workspace-audit-apr7-13", "action": "resolve 55 lychee redirects", "status": "pending", "issue": 106, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+        { "id": "audit-1c-1", "plan": "workspace-audit-apr7-13", "action": "merge docs/url-triage-batch-analysis to main", "status": "done", "issue": null, "pr": 95, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1c-2", "plan": "workspace-audit-apr7-13", "action": "resolve 55 lychee redirects", "status": "pending", "issue": 106, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1c-3", "plan": "workspace-audit-apr7-13", "action": "merge PR #127 CC 1.x session schema + docs/todo triage + lychee fix", "status": "done", "issue": null, "pr": 127, "depends_on": [], "last_run": "2026-04-26T16:10:29Z", "cost_usd": null, "error": null, "note": "merged 2026-04-26 (P1.a)" }
       ]
     },
     "qte77/so101-biolab-automation": {
       "tasks": [
-        { "id": "audit-1d-1", "plan": "workspace-audit-apr7-13", "action": "delete merged branches", "status": "done", "issue": null, "pr": null, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null }
+        { "id": "audit-1d-1", "plan": "workspace-audit-apr7-13", "action": "delete merged branches", "status": "done", "issue": null, "pr": null, "depends_on": [], "last_run": "2026-04-14T00:00:00Z", "cost_usd": null, "error": null, "note": null },
+        { "id": "audit-1d-2", "plan": "workspace-audit-apr7-13", "action": "merge PR #116 thicken cam arm + lengthen for torque", "status": "pending", "issue": 44, "pr": 116, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "auto-merge enabled; awaiting branch-protection gate (P1.b)" },
+        { "id": "audit-1d-3", "plan": "workspace-audit-apr7-13", "action": "merge PR #117 dPette USB driver via [tool.uv.sources]", "status": "pending", "issue": 61, "pr": 117, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "auto-merge enabled; awaiting branch-protection gate (P1.c)" },
+        { "id": "audit-1d-4", "plan": "workspace-audit-apr7-13", "action": "lerobot monkey-patch refactor", "status": "skipped", "issue": 76, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "defer until lerobot breaks OR multi-dev pain (issue body condition) (P7.b)" },
+        { "id": "audit-1d-5", "plan": "workspace-audit-apr7-13", "action": "serial port auto-detection", "status": "skipped", "issue": 77, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "defer: blocked by only 1 follower available (issue body condition) (P7.b)" },
+        { "id": "audit-1d-6", "plan": "workspace-audit-apr7-13", "action": "ELN integration", "status": "skipped", "issue": 81, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "defer until UC1-4 work on real hardware (issue body condition) (P7.b)" }
+      ]
+    },
+    "qte77/Superdesign": {
+      "tasks": [
+        { "id": "audit-1e-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #4 Phase 0 TDD scaffold + governance + ralph + CI", "status": "pending", "issue": null, "pr": 4, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "auto-merge enabled; admin-merge candidate (clean CI, branch-protection BLOCKED) (P1.d)" },
+        { "id": "superdesign-1", "plan": "superdesign-scaffold", "action": "implement STORY-001 baseline", "status": "pending", "issue": null, "pr": null, "depends_on": ["audit-1e-1"], "last_run": null, "cost_usd": null, "error": null, "note": "deferred large effort; gated on PR #4 merge (P7.a)" }
+      ]
+    },
+    "Lambda-Biolab/CellPlateVision-Prototype": {
+      "tasks": [
+        { "id": "audit-1f-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #3 feasibility assessment", "status": "pending", "issue": 2, "pr": 3, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "awaiting user answers to 4 open questions before merge (P1.e)" },
+        { "id": "cellplate-1", "plan": null, "action": "scaffold CellPlateVision repo (TDD + governance + CI)", "status": "pending", "issue": null, "pr": null, "depends_on": ["audit-1f-1"], "last_run": null, "cost_usd": null, "error": null, "note": "deferred large effort; gated on feasibility assessment merge (P7.c)" }
       ]
     },
     "pat-tax/RDI-AgentBeats-TheBulletproofProtocol": {
       "tasks": [
-        { "id": "rdi-a2-1", "plan": "rdi-agentbeats", "action": "register agents on agentbeats.dev", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
-        { "id": "rdi-a2-2", "plan": "rdi-agentbeats", "action": "fix BUG-001 evaluator threshold", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null },
-        { "id": "rdi-a2-3", "plan": "rdi-agentbeats", "action": "fix BUG-002 on_message_send return type", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+        { "id": "rdi-a2-1", "plan": "rdi-agentbeats", "action": "register agents on agentbeats.dev", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "rdi-a2-2", "plan": "rdi-agentbeats", "action": "fix BUG-001 evaluator threshold", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null },
+        { "id": "rdi-a2-3", "plan": "rdi-agentbeats", "action": "fix BUG-002 on_message_send return type", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null }
       ]
     },
     "qte77/RDI-AgentBeats-MAS-GraphJudge": {
       "tasks": [
-        { "id": "rdi-a3-1", "plan": "rdi-agentbeats", "action": "fix scenario.toml duplicate IDs + missing names", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+        { "id": "rdi-a3-1", "plan": "rdi-agentbeats", "action": "fix scenario.toml duplicate IDs + missing names", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null }
       ]
     },
     "qte77/RDI-AgentBeats-TestBehaveAlign": {
       "tasks": [
-        { "id": "rdi-a4-1", "plan": "rdi-agentbeats", "action": "build purple baseline STORY-001 through STORY-006", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null }
+        { "id": "rdi-a4-1", "plan": "rdi-agentbeats", "action": "build purple baseline STORY-001 through STORY-006", "status": "pending", "issue": null, "pr": null, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": null }
       ]
     }
   },
   "totals": {
-    "pending": 10,
+    "pending": 20,
     "running": 0,
-    "done": 5,
+    "done": 6,
     "failed": 0,
-    "skipped": 1,
+    "skipped": 4,
     "cost_usd": 0
   }
 }
