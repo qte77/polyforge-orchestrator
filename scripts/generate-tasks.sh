@@ -37,11 +37,16 @@ for i in "${!REPOS[@]}"; do
     }]')
 done
 
-# Write workspace file (folders + tasks)
+# Write workspace file (folders + settings + tasks)
+# task.allowAutomaticTasks: "on" lets folderOpen tasks run without the per-workspace prompt
 jq -n \
   --argjson folders "$folders" \
   --argjson tasks "$tasks" \
-  '{folders: $folders, tasks: {version: "2.0.0", tasks: $tasks}}' \
+  '{
+    folders: $folders,
+    settings: {"task.allowAutomaticTasks": "on"},
+    tasks: {version: "2.0.0", tasks: $tasks}
+  }' \
   > "$WORKSPACE_FILE"
 
 success "Generated $WORKSPACE_FILE with ${#REPOS[@]} repos and tasks"
