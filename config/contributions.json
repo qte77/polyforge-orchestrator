@@ -1,7 +1,7 @@
 {
   "$schema": "contributions.schema.json",
   "version": "1.1.0",
-  "updated": "2026-04-27T00:00:00Z",
+  "updated": "2026-04-27T22:00:00Z",
   "plans": {
     "workspace-audit-apr7-13": {
       "source": "~/.claude/plans/workspace-activity-audit-apr7-13.md",
@@ -39,9 +39,9 @@
       "source": "~/.claude/plans/superdesign-fork-ralph-tdd-scaffold.md",
       "title": "Superdesign Fork Scaffold",
       "scope": "1 repo",
-      "phase": null,
-      "started": null,
-      "tracked": false
+      "phase": "phase-1",
+      "started": "2026-04-27",
+      "tracked": true
     },
     "ralphy-offspring": {
       "source": "~/.claude/plans/ralphy-offspring-self-evolving.md",
@@ -92,7 +92,7 @@
     },
     "qte77/Superdesign": {
       "tasks": [
-        { "id": "audit-1e-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #4 Phase 0 TDD scaffold + governance + ralph + CI", "status": "pending", "issue": null, "pr": 4, "depends_on": [], "last_run": null, "cost_usd": null, "error": null, "note": "auto-merge enabled; admin-merge candidate (clean CI, branch-protection BLOCKED) (P1.d)" },
+        { "id": "audit-1e-1", "plan": "workspace-audit-apr7-13", "action": "merge PR #4 Phase 0 TDD scaffold + governance + ralph + CI", "status": "done", "issue": null, "pr": 4, "depends_on": [], "last_run": "2026-04-27T22:00:00Z", "cost_usd": null, "error": null, "note": "admin-merged 2026-04-27 (P1.d)" },
         { "id": "superdesign-1", "plan": "superdesign-scaffold", "action": "implement STORY-001 baseline", "status": "pending", "issue": null, "pr": null, "depends_on": ["audit-1e-1"], "last_run": null, "cost_usd": null, "error": null, "note": "deferred large effort; gated on PR #4 merge (P7.a)" }
       ]
     },
@@ -121,9 +121,9 @@
     }
   },
   "totals": {
-    "pending": 20,
+    "pending": 19,
     "running": 0,
-    "done": 6,
+    "done": 7,
     "failed": 0,
     "skipped": 4,
     "cost_usd": 0
