@@ -1,14 +1,12 @@
 <!-- markdownlint-disable MD033 -->
 # polyforge-orchestrator
 
-Orchestrate parallel AI coding agents across
-a polyrepo codebase from a single Codespace
-or devcontainer.
+Orchestrate parallel AI coding agents across a polyrepo codebase from a single devcontainer or vscode workspace.
 
-**For** teams running Claude Code (or other AI agents)
-across multiple repos simultaneously.
-**Run** `./scripts/cc-parallel.sh --preset validate`
-to validate all repos in one command.
+Run Claude Code (or any AI coding agent) in parallel across every repo in a polyrepo workspace from a single devcontainer. Generates a multi-root VS Code workspace with per-repo terminal tasks, bridges each repo's `devcontainer.json` lifecycle into the host container, and ships validate/security/test presets plus a contribution-task registry. Driven by `config/repos.conf` + `config/contributions.json`.
+
+**For** teams running Claude Code (or other AI agents) across multiple repos simultaneously.
+**Run** `./scripts/cc-parallel.sh --preset validate` to validate all repos in one command.
 
 ## Quick Start
 
