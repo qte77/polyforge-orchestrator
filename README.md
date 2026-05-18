@@ -1,14 +1,12 @@
 <!-- markdownlint-disable MD033 -->
 # polyforge-orchestrator
 
-Orchestrate parallel AI coding agents across
-a polyrepo codebase from a single Codespace
-or devcontainer.
+Orchestrate parallel AI coding agents across a polyrepo codebase from a single devcontainer or vscode workspace.
 
-**For** teams running Claude Code (or other AI agents)
-across multiple repos simultaneously.
-**Run** `./scripts/cc-parallel.sh --preset validate`
-to validate all repos in one command.
+Run Claude Code (or any AI coding agent) in parallel across every repo in a polyrepo workspace from a single devcontainer. Generates a multi-root VS Code workspace with per-repo terminal tasks, bridges each repo's `devcontainer.json` lifecycle into the host container, and ships validate/security/test presets plus a contribution-task registry. Driven by `config/repos.conf` + `config/contributions.json`.
+
+**For** teams running Claude Code (or other AI agents) across multiple repos simultaneously.
+**Run** `./scripts/cc-parallel.sh --preset validate` to validate all repos in one command.
 
 ## Quick Start
 
@@ -35,11 +33,13 @@ shared tooling (Claude Code, RTK, lychee, markdownlint),
 clones all repos from `config/repos.conf`, and generates
 `workspace.code-workspace` with terminal tasks per repo.
 
-On attach (`make setup_repos`), it reads each repo's
-`devcontainer.json` and runs their `onCreateCommand` +
-`postCreateCommand` inside the host container — bridging
-the gap where multi-root workspaces only run the host
-container's devcontainer lifecycle.
+On attach (`make setup_repos`), polyforge reads each
+sibling repo's `devcontainer.json` and replays their
+`onCreateCommand` / `postCreateCommand` inside the host
+container. VS Code multi-root workspaces only honor the
+host container's lifecycle, so sibling hooks would
+otherwise be silently dropped — per-repo setup (deps,
+tooling, hooks) would never run.
 
 Terminal tasks auto-open via `runOn: folderOpen` in both
 VS Code Desktop and Web.
