@@ -33,11 +33,13 @@ shared tooling (Claude Code, RTK, lychee, markdownlint),
 clones all repos from `config/repos.conf`, and generates
 `workspace.code-workspace` with terminal tasks per repo.
 
-On attach (`make setup_repos`), it reads each repo's
-`devcontainer.json` and runs their `onCreateCommand` +
-`postCreateCommand` inside the host container — bridging
-the gap where multi-root workspaces only run the host
-container's devcontainer lifecycle.
+On attach (`make setup_repos`), polyforge reads each
+sibling repo's `devcontainer.json` and replays their
+`onCreateCommand` / `postCreateCommand` inside the host
+container. VS Code multi-root workspaces only honor the
+host container's lifecycle, so sibling hooks would
+otherwise be silently dropped — per-repo setup (deps,
+tooling, hooks) would never run.
 
 Terminal tasks auto-open via `runOn: folderOpen` in both
 VS Code Desktop and Web.
