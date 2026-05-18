@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `docs/codespaces.md`: token format prefix table (`ghu_` / `github_pat_` / etc., 1p-cited); GPG-signing diagnostics audit one-liner; reset/rebuild scope table; inherited-git-config subsection covering `commit.template` per-repo override; expanded References block with 1p `docs.github.com/en/codespaces/...` URLs. Absorbs research that was previously kept in `qte77/polyfetch-scrape/docs/codespaces-*.md` (now removed there in favour of this canonical home).
+- `docs/codespaces.md` "Caveat: `GH_TOKEN=$GH_PAT` mapping may break `gh-gpgsign`" subsection — unverified hypothesis with side-by-side reproduction, confirming probe, and small fix path. Tracked under #64.
 - `scripts/generate-workspace.sh`: generates `workspace.code-workspace` (folders only) from `repos.conf` for multi-root sidebar
 - WakaTime API key non-interactive setup via `WAKATIME_API_KEY` Codespace secret
 - tmux installed via `apt-get` in `onCreateCommand`; `cc-repos.sh` creates detached session with per-repo windows
