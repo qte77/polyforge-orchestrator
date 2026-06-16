@@ -12,7 +12,8 @@ Run Claude Code (or any AI coding agent) in parallel across every repo in a poly
 
 ```bash
 ./scripts/cc-parallel.sh --preset validate
-./scripts/cc-parallel.sh --preset security
+./scripts/cc-parallel.sh --preset security-all   # repo-wide audit (all repos)
+./scripts/cc-parallel.sh --preset security-pr    # diff-scoped, untrusted inbound PRs
 ./scripts/cc-status.sh
 ```
 
