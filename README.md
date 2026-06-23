@@ -51,3 +51,4 @@ VS Code Desktop and Web.
 - [Cross-repo setup](docs/cross-repo-setup.md) — auth, sandbox, settings
 - [Cloud workflows](docs/cc-web-cloud-workflows.md) — remote execution
 - [Sandbox friction](docs/sandbox-friction.md) — known issues, mitigations
+- [Engineering-practice baseline](https://github.com/qte77/qte77/blob/main/docs/cto-handbook-mapping.md) — how the dev-loop presets (DevOps / testing / RCA) map to the Startup CTO Handbook (estate-level note in qte77)
