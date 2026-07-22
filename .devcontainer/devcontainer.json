@@ -3,7 +3,8 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/node:1": {}
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "customizations": {
     "vscode": {
@@ -35,7 +36,6 @@
   },
   "containerEnv": {
     "GH_PAT": "${localEnv:GH_PAT}",
-    "GH_TOKEN": "${localEnv:GH_PAT}",
     "WAKATIME_API_KEY": "${localEnv:WAKATIME_API_KEY}",
     "RTK_TELEMETRY_DISABLED": "1"
   },
