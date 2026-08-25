@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `Makefile`: `setup_claude_home` target, run first in `setup_all` — idempotently re-links `~/.claude` to
+  `/workspaces/.claude-files` on every container create/rebuild (the symlink itself lives outside
+  `/workspaces` and is wiped on rebuild along with everything else there). `docs/codespaces.md`
+  persistence-boundary section: what survives rebuild (`/workspaces`) vs. what doesn't (`$HOME`,
+  including the symlink and `~/.claude.json`, which has no fix yet — see
+  qte77/claude-code-plugins#199).
+
 ### Fixed
 
 - `clone-repos.sh`: seed `~/.wakatime.cfg` with tracking-safe defaults — `include_only_with_project_file` and `exclude_unknown_project` silently block all heartbeats when `true` (closes #30)

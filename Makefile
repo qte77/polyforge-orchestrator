@@ -2,8 +2,8 @@
 .ONESHELL:
 SHELL := /bin/bash
 .PHONY: \
-	help setup_all setup_repos setup_vscode setup_gh_auth setup_claude_code \
-	setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
+	help setup_all setup_repos setup_vscode setup_gh_auth setup_claude_home \
+	setup_claude_code setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
 	generate_tasks clone_repos \
 	contrib_setup contrib_triage contrib_implement contrib_review \
 	contrib_status contrib_cleanup
@@ -26,11 +26,19 @@ JSCPD_VERSION := 4.0.8
 
 setup_all:  ## Run all setup steps (non-fatal: failures warn, don't abort)
 	$(_src_colors)
-	for target in setup_gh_auth clone_repos setup_claude_code setup_claude_sandbox \
+	for target in setup_claude_home setup_gh_auth clone_repos setup_claude_code setup_claude_sandbox \
 		setup_npm_tools setup_lychee setup_rtk generate_tasks; do \
 		$(MAKE) $$target || warn "$$target failed, continuing..."; \
 	done
 	success "Setup complete"
+
+setup_claude_home:  ## Symlink ~/.claude to persisted /workspaces/.claude-files (survives container rebuilds)
+	$(_src_colors)
+	home="$$HOME/.claude"; target="/workspaces/.claude-files"; \
+	if [ -L "$$home" ]; then info "~/.claude already linked to $$target"; \
+	elif [ -e "$$target" ]; then rm -rf "$$home" && ln -s "$$target" "$$home" && success "Linked ~/.claude -> $$target"; \
+	else mv "$$home" "$$target" 2>/dev/null; mkdir -p "$$target"; ln -s "$$target" "$$home" && success "Seeded and linked ~/.claude -> $$target"; \
+	fi
 
 setup_gh_auth:  ## Configure gh as git credential helper + durable GPG signing config
 	$(_src_colors)

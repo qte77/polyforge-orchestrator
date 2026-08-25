@@ -33,6 +33,14 @@ Or via VS Code command palette:
 Note: `Dev Containers: Rebuild Container` works for
 local devcontainers, not Codespaces.
 
+## Persistence across rebuild
+
+Per [GitHub's Codespaces docs](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers): rebuilding a container clears everything **outside** `/workspaces`; everything inside it survives. That boundary is absolute — it includes `$HOME` (`/home/vscode`), so anything living there needs an explicit plan.
+
+`~/.claude` is symlinked to `/workspaces/.claude-files` (this predates this repo — set up by `qte77/dotfiles`'s Codespaces-aware `install.sh`, which is account-level dotfiles config, not anything in this repo's `devcontainer.json`). The symlink itself is a file under `$HOME`, so it's wiped on rebuild same as everything else there — only the *target* (`/workspaces/.claude-files`) survives. `setup_claude_home` (run first in `setup_all`) re-links it idempotently on every `onCreateCommand`, as a repo-level guarantee that doesn't depend on dotfiles having run (or re-run) for a given rebuild — that ordering is unverified and left that way; the fix is idempotent and compatible either way.
+
+Not covered: `~/.claude.json` (a sibling file next to `~/.claude/`, holding per-project trust approvals and marketplace/onboarding state) has no persistence mechanism here. Symlinking it like a directory is a known-risky pattern — Claude Code's config writes aren't verified atomic-rename-safe on every path, which silently breaks a *file* symlink (unlike a directory symlink, which isn't affected). Tracked at [qte77/claude-code-plugins#199](https://github.com/qte77/claude-code-plugins/issues/199).
+
 ## Management
 
 Manage any Codespace from within polyforge-orchestrator using `-c`:
@@ -251,3 +259,4 @@ gh codespace ports forward 8080:8080
 - [Org/repo Codespaces secrets](https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-development-environment-secrets-for-your-repository-or-organization) — libsodium sealed-box encryption
 - [Token format prefixes](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github) — `ghu_` / `ghp_` / `github_pat_` / etc.
 - [`gh codespace` CLI](https://cli.github.com/manual/gh_codespace)
+- [Introduction to dev containers](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers) — `/workspaces` vs. everything-else rebuild persistence boundary
