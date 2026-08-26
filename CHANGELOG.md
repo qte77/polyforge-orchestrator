@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `scripts/link-claude-home.sh`: replaced the hand-rolled `setup_claude_home` symlink logic with a
+  vendored copy of `qte77/claude-code-plugins`' `workspace-setup` plugin script (1.5.1) — the plugin's
+  own README documents "copy into your repo" as the intended distribution model, so this repo is now an
+  actual consumer of that pattern instead of a second implementation to keep in sync by hand. Also
+  picks up that version's target-verification fix (a stale symlink pointing elsewhere no longer reads
+  as "already linked"). `docs/codespaces.md` updated: `qte77/dotfiles`'s own README confirms dotfiles
+  installation only applies to new codespaces, not rebuilds of existing ones — `setup_claude_home` is
+  the actual mechanism keeping `~/.claude` linked across a rebuild, not a backstop.
+
 ### Added
 
 - `Makefile`: `setup_claude_home` target, run first in `setup_all` — idempotently re-links `~/.claude` to
