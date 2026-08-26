@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   including the symlink and `~/.claude.json`, which has no fix yet — see
   qte77/claude-code-plugins#199).
 
+### Security
+
+- `package-lock.json`: `js-yaml` 5.2.1 → 5.2.3 (advisory affecting the range left by the prior bump),
+  `brace-expansion` 5.0.7 → 5.0.9 (newer advisory bypassing the prior 5.0.7 mitigation) — `npm audit`
+  now reports 0 vulnerabilities.
+
 ### Fixed
 
 - `clone-repos.sh`: seed `~/.wakatime.cfg` with tracking-safe defaults — `include_only_with_project_file` and `exclude_unknown_project` silently block all heartbeats when `true` (closes #30)
