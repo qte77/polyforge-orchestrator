@@ -182,10 +182,95 @@ clearing:
 GITHUB_TOKEN= GH_TOKEN= some-command
 ```
 
+Or, to genuinely unset rather than set-empty (some tools check env-var
+*presence*, not just value):
+
+```bash
+env -u GH_TOKEN -u GITHUB_TOKEN some-command
+```
+
 This is already the canonical pattern in `Makefile`'s `setup_rtk`
 target — see lines around the `curl … rtk install.sh` invocation. Use
 it as the example when documenting any new automation that must run
 under a different token (or no token at all).
+
+**Caveat — this is not a privilege-reduction mechanism.** Dropping
+`GH_TOKEN`/`GITHUB_TOKEN` only changes which *already-present*
+credential `gh`/`git` pick up next; it does not remove access.
+Verified 2026-09-04: this codespace's `~/.config/gh/hosts.yml` holds a
+stored classic OAuth token (`gho_*`, scopes `gist, read:org, repo,
+workflow`) used deliberately for cross-org pushes, and — separately —
+`gh auth status` reported the `GH_TOKEN`-mapped `GH_PAT` env var as
+*invalid* at the time of checking, meaning this `gho_` token may
+already be doing all the actual pushing here, not just serving as a
+fallback. Classic tokens can't be repo-scoped, so it reaches every
+repo the account can touch — as broad as, or broader than, `GH_PAT`.
+Unsetting the env vars falls through to *that* token, not to nothing.
+It's also not a container
+isolation boundary: the credential still sits on disk regardless of
+what's unset for one command, so any code executing in this same
+container (e.g. a `postCreateCommand` from untrusted repo content
+pulled into this workspace) can read it directly. Use this escape
+hatch only to dodge third-party tooling conflicts, never to get a
+lower-privilege credential — for that, see "Contributing to
+external/untrusted repos" below.
+
+## Contributing to external/untrusted repos
+
+Two independent things scope a GitHub credential, and only one is
+narrow by default here:
+
+- **Which codespaces receive a secret** — `gh secret set GH_PAT --user
+  --repos <list>` controls *injection*: which codespaces get `GH_PAT`
+  at all.
+- **What the token can reach once injected** — set when the
+  fine-grained PAT itself was created (github.com/settings/personal-access-tokens),
+  independent of the line above. `GH_PAT` presumably needs write
+  access spanning every repo this orchestrator manages
+  (`config/repos.conf`) for its own job to work, but its actual
+  repository-access list is **not verifiable from inside a
+  codespace** (an API read attempt got `401 Bad credentials`) — check
+  it directly at github.com/settings/personal-access-tokens. Either
+  way, "created on a repo we own" was never a scope limiter — the
+  `--repos` allow-list only ever gated injection, not reach.
+
+For work on a repo you don't own or fully trust, don't reuse this
+codespace's credentials at all (see the caveat above — env-var
+unsetting doesn't isolate you from them). Use a separate codespace
+instead:
+
+1. Fork the external repo to your own account.
+2. Don't add the fork to `GH_PAT`'s Codespaces-secret `--repos`
+   allow-list.
+3. Create a fresh codespace on the fork. Don't manually run `gh auth
+   login`, `source ~/.gh_pat`, or any of this repo's own
+   credential-setup patterns there. If account-level dotfiles
+   auto-install is enabled (github.com/settings/codespaces — not
+   checked here) `qte77/dotfiles`'s `install.sh` will run there too;
+   its content is verified (2026-09-04, `main` branch) to never touch
+   `gh auth` — it only symlinks editor/config files — so it isn't a
+   source of broad credentials either way. A fresh codespace should
+   therefore start with nothing but GitHub's own auto-injected `ghu_`
+   token (env-var `GITHUB_TOKEN`, scoped to that one repo) and an
+   empty `hosts.yml` — confirm this with step 4 rather than assuming it.
+4. Verify before doing anything else: `gh auth status` should show
+   only the `GITHUB_TOKEN`-sourced auth, `ghu_*` prefix, and no
+   `hosts.yml` entry. If anything else appears, stop and investigate
+   before touching git.
+5. Skim the fork's own `.devcontainer/devcontainer.json` and
+   `postCreateCommand`/`onCreateCommand` before letting them run — it's
+   still untrusted code with a real (if narrow) token available to it.
+6. Push to the fork with the default token — that works. Open the PR
+   against upstream **via the browser**, not `gh pr create`: the
+   default token can't create PRs cross-repo (needs
+   `pull_requests:write` on upstream, which a fork-scoped token
+   doesn't have — see the [Token scopes](#token-scopes) table above).
+   This also means the whole flow needs zero extra tokens minted.
+7. Only if upstream write access is genuinely required, mint a
+   purpose-built fine-grained PAT whose own repository-access list
+   (set at PAT creation, independent of any secret's `--repos`
+   allow-list) is restricted to exactly that repo pair. Never reuse
+   `GH_PAT` or the `hosts.yml` OAuth token for this.
 
 ## Diagnostics
 
