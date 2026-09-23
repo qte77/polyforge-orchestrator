@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-23
+
 ### Changed
 
 - `scripts/link-claude-home.sh`: replaced the hand-rolled `setup_claude_home` symlink logic with a
@@ -24,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `docs/codespaces.md`: "Contributing to external/untrusted repos" section — the two-layer
+  credential-scoping model (Codespaces-secret `--repos` gates *injection*, the PAT's own
+  repository-access list gates *reach*) and the safe pattern: a separate codespace with no secrets
+  added, relying on GitHub's auto-injected `ghu_` token. Caveat on the "Escape hatch" section:
+  unsetting `GH_TOKEN`/`GITHUB_TOKEN` is not privilege reduction or isolation — `hosts.yml` holds a
+  second, equally broad `gho_` token. Matching `AGENT_LEARNINGS.md` entry (#86)
 - `Makefile`: `setup_claude_home` target, run first in `setup_all` — idempotently re-links `~/.claude` to
   `/workspaces/.claude-files` on every container create/rebuild (the symlink itself lives outside
   `/workspaces` and is wiped on rebuild along with everything else there). `docs/codespaces.md`
@@ -33,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- `package-lock.json`: `smol-toml` 1.7.0 → 1.7.2 — fixes high-severity DoS via malformed TOML
+  documents (Dependabot alert #7) (#85)
 - `package-lock.json`: `js-yaml` 5.2.1 → 5.2.3 (advisory affecting the range left by the prior bump),
   `brace-expansion` 5.0.7 → 5.0.9 (newer advisory bypassing the prior 5.0.7 mitigation) — `npm audit`
   now reports 0 vulnerabilities.
