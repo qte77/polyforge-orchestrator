@@ -3,8 +3,7 @@
 # Derives local paths as ../owner/repo relative to polyforge root
 # Polyforge itself is always included as the first entry
 # repos.conf format: gh_repo:name[:fork] — third field optional, "fork" marks
-# the repo as a contribution fork (consumed by contrib-status.sh and the
-# cc-parallel.sh --preset contribute path)
+# the repo as a contribution fork (consumed by contrib-status.sh)
 # Usage: source scripts/load-workspace-repos.sh
 
 POLYFORGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
