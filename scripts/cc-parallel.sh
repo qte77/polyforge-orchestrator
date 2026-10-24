@@ -18,9 +18,10 @@
 #   ./cc-parallel.sh --preset validate
 #   ./cc-parallel.sh "Check for TODO comments" /workspaces/Agents-eval
 #
-# A spawned claude's process exit code reflects CLI/process failure, not
-# whether it achieved the prompt's goal -- judge each run from its outfile's
-# `.result` field, not from the exit status collected below.
+# A spawned claude's process exit code does not distinguish "achieved the
+# prompt's goal" from "ran and returned text about why it couldn't" (e.g. a
+# denied tool call, or missing auth) -- read each run's outfile `.result`
+# field for the actual outcome text instead of branching on exit status alone.
 
 set -euo pipefail
 
