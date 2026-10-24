@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `docs/context-hygiene.md`, `docs/subagent-dispatch.md`: replaced their `--preset contribute` /
   `--mode triage` references with a one-line note that the preset isn't implemented yet.
+- `scripts/load-workspace-repos.sh`, `config/repos.conf`, `docs/subagent-dispatch.md`: dropped the
+  remaining mentions of the unimplemented `contribute` preset and the removed `contrib_triage` /
+  `contrib_implement` / `contrib_review` targets.
 
 ## [0.1.0] - 2026-09-23
 

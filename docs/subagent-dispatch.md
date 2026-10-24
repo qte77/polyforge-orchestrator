@@ -44,8 +44,8 @@ SKILL PROMPTS" preamble seems to mitigate but not fully prevent.
 
 ## Why This Matters for Polyforge
 
-These are load-bearing constraints for `make contrib_triage/implement/review`
-wiring and any future multi-repo CC dispatch. Without accounting for them,
+These are load-bearing constraints for any multi-repo CC dispatch,
+including a future `contribute` preset. Without accounting for them,
 parallel subagent work produces ~70% failure rate (4 of 5 Phase 2 agents
 had issues).
 
@@ -114,8 +114,8 @@ Agent({
 
 Loses parallelism when multiple agents target the **same** repo (nested
 worktrees would collide on branch names). Fine when each agent targets a
-**different** repo — which matches the `contrib_triage` pattern (one
-agent per `:fork`-flagged external target).
+**different** repo — which matches contribution work (one agent per
+`:fork`-flagged external target).
 
 ## Proposed Action
 
