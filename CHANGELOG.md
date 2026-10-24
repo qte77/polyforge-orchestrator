@@ -11,6 +11,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `scripts/cc-parallel.sh`: gave the `validate`, `security-all`, and `security-pr` presets
+  explicit, least-privilege permission flags for the spawned `claude -p` instead of relying on
+  implicit Manual mode. Per Anthropic's headless docs, `claude -p` starts in Manual mode when no
+  mode is set, and "a call that needs approval is denied unless something approves it" — so
+  `validate`'s `make validate` call was denied outright in every unattended run. `validate` gets
+  `--permission-mode dontAsk --allowedTools "Bash(make validate *)"`; `security-all` and
+  `security-pr` (read-only static review) get `dontAsk` plus `Read,Grep,Glob` and, for
+  `security-pr`, the exact read-only git commands its prompt names. The fallback the `validate`
+  prompt allows ("closest equivalent: lint, type check, test") can't be allow-listed narrowly and
+  is denied under `dontAsk` unless a repo defines `make validate` — a known, documented limit.
+
+### Removed
+
+- `Makefile`: removed the `contrib_triage`, `contrib_implement`, and `contrib_review` targets.
+  Each called `scripts/cc-parallel.sh --preset contribute --mode <mode>`, but `cc-parallel.sh`
+  only ever defined the `validate`, `security-all`, and `security-pr` presets and rejects
+  `--mode` as an unknown option — all three targets always failed. No `contribute` preset is
+  implemented; `config/contributions.json` stays hand-maintained.
+
+### Changed
+
+- `docs/context-hygiene.md`, `docs/subagent-dispatch.md`: replaced their `--preset contribute` /
+  `--mode triage` references with a one-line note that the preset isn't implemented yet.
+
 ## [0.1.0] - 2026-09-23
 
 ### Changed

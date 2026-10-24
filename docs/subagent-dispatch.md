@@ -119,16 +119,9 @@ agent per `:fork`-flagged external target).
 
 ## Proposed Action
 
-Incorporate this pattern into `scripts/cc-parallel.sh --preset contribute`
-wiring. The dispatch function should:
-
-1. Set `isolation: "worktree"` when spawning agents
-2. Inject the Step-1 cd+worktree-add boilerplate into every subagent
-   prompt
-3. Include the skill-derailment preamble guard
-4. Enforce the user-confirmation gate **before** fanning out
-5. Document that each target repo's `.claude/settings.json` is the
-   authority for what bash is allowed — polyforge does not override
+A `contribute` preset is not implemented yet; `config/contributions.json` is
+maintained by hand. If one is built later, this nested-worktree pattern is
+the design to incorporate.
 
 ## Source
 
