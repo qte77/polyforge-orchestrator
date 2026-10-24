@@ -101,8 +101,11 @@ rules loaded). Use `--bare` for plumbing presets where you want clean
 context across the fan-out.
 
 ```bash
-./scripts/cc-parallel.sh --bare --preset contribute --mode triage
+./scripts/cc-parallel.sh --bare --preset security-all
 ```
+
+A `contribute` preset is not implemented yet; `config/contributions.json`
+is maintained by hand.
 
 ## See also
 
