@@ -16,6 +16,8 @@ endef
 # Pinned known-good versions (fallback when latest fails)
 RTK_VERSION := 0.34.1
 LYCHEE_VERSION := 0.23.0
+LYCHEE_TARGET := x86_64-unknown-linux-gnu
+LYCHEE_BIN_DIR ?= $(HOME)/.local/bin
 MARKDOWNLINT_VERSION := 0.48.0
 JSCPD_VERSION := 4.0.8
 
@@ -93,16 +95,26 @@ setup_npm_tools:  ## Setup npm-based dev tools (markdownlint, jscpd) locally
 	npx markdownlint --version > /dev/null 2>&1 && success "markdownlint version: $$(npx markdownlint --version)" || true
 	npx jscpd --version > /dev/null 2>&1 && success "jscpd version: $$(npx jscpd --version)" || true
 
-setup_lychee:  ## Install lychee link checker (Rust binary, requires sudo)
+setup_lychee:  ## Install lychee link checker (Rust binary) to ~/.local/bin, no sudo
+	# Release tarballs wrap the binary in a top-level dir (lychee-<target>/lychee),
+	# so extract to a tmpdir and install the binary from there.
 	$(_src_colors)
 	if command -v lychee > /dev/null 2>&1; then info "lychee already installed: $$(lychee --version)"; \
 	else \
-		info "Installing lychee (trying latest, fallback to v$(LYCHEE_VERSION))..."; \
-		curl -sL https://github.com/lycheeverse/lychee/releases/latest/download/lychee-x86_64-unknown-linux-gnu.tar.gz | sudo tar xz -C /usr/local/bin lychee \
-		|| curl -sL "https://github.com/lycheeverse/lychee/releases/download/lychee-v$(LYCHEE_VERSION)/lychee-x86_64-unknown-linux-gnu.tar.gz" | sudo tar xz -C /usr/local/bin lychee \
+		info "Installing lychee to $(LYCHEE_BIN_DIR) (trying latest, fallback to v$(LYCHEE_VERSION))..."; \
+		tmp=$$(mktemp -d); \
+		{ curl -sSfL "https://github.com/lycheeverse/lychee/releases/latest/download/lychee-$(LYCHEE_TARGET).tar.gz" | tar xz -C "$$tmp" \
+			|| curl -sSfL "https://github.com/lycheeverse/lychee/releases/download/lychee-v$(LYCHEE_VERSION)/lychee-$(LYCHEE_TARGET).tar.gz" | tar xz -C "$$tmp"; } \
+		&& bin=$$(find "$$tmp" -type f -name lychee -print -quit) && [[ -n "$$bin" ]] \
+		&& mkdir -p "$(LYCHEE_BIN_DIR)" && install -m 755 "$$bin" "$(LYCHEE_BIN_DIR)/lychee" \
 		|| warn "lychee install failed, skipping"; \
+		rm -rf "$$tmp"; \
 	fi
-	command -v lychee > /dev/null 2>&1 && success "lychee version: $$(lychee --version)" || true
+	if command -v lychee > /dev/null 2>&1; then success "lychee version: $$(lychee --version)"; \
+	elif [[ -x "$(LYCHEE_BIN_DIR)/lychee" ]]; then \
+		success "lychee version: $$("$(LYCHEE_BIN_DIR)/lychee" --version)"; \
+		warn "$(LYCHEE_BIN_DIR) is not on PATH"; \
+	fi
 
 
 setup_repos:  ## Run each repo's devcontainer setup commands (uv, npm, etc.)
