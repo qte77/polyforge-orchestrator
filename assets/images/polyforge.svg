@@ -104,7 +104,7 @@
     <text x="60" y="290">.vscode/</text>
     <text x="60" y="308">docs/</text>
     <text x="60" y="326">scripts/</text>
-    <text x="60" y="344" class="tree-file">CLAUDE.md</text>
+    <text x="60" y="344" class="tree-file">AGENTS.md</text>
     <text x="60" y="362" class="tree-file">Makefile</text>
     <text x="60" y="380" class="tree-file">README.md</text>
     <text x="60" y="398" class="tree-ws">workspace.code-workspace</text>
