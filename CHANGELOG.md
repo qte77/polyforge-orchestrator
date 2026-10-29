@@ -23,8 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `security-pr`, the exact read-only git commands its prompt names. The fallback the `validate`
   prompt allows ("closest equivalent: lint, type check, test") can't be allow-listed narrowly and
   is denied under `dontAsk` unless a repo defines `make validate` — a known, documented limit.
+- `Makefile`: `make setup_lychee` extracts the release tarball to a tmpdir and installs the binary
+  from its `lychee-<target>/` wrapper directory to `~/.local/bin` (`LYCHEE_BIN_DIR`), without sudo
+  (#70, PR #95).
+
+### Added
+
+- `config/contributions.schema.json`: optional `goal_id` on plans, linking a campaign to a
+  `qte77/goals.json` goal by reference. Plans also accept `note`, which `contributions.json`
+  already used (#79, PR #97).
 
 ### Removed
+
+- `CLAUDE.md`: `AGENTS.md` is now the only project-instructions file (#89, PR #98).
 
 - `Makefile`: removed the `contrib_triage`, `contrib_implement`, and `contrib_review` targets.
   Each called `scripts/cc-parallel.sh --preset contribute --mode <mode>`, but `cc-parallel.sh`
@@ -39,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/load-workspace-repos.sh`, `config/repos.conf`, `docs/subagent-dispatch.md`: dropped the
   remaining mentions of the unimplemented `contribute` preset and the removed `contrib_triage` /
   `contrib_implement` / `contrib_review` targets.
+- `README.md`: follows the qte77 doc-structure canon (License/Version/CodeFactor badges,
+  What/How/Why/Refs/License sections) (#77, PR #96).
 
 ## [0.1.0] - 2026-09-23
 
