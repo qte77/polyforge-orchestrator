@@ -141,36 +141,51 @@ When you want write access through a fine-grained PAT, set `GH_PAT` in
 your local environment. Everything else flows from there. No need to set
 `GITHUB_TOKEN` or `GH_TOKEN` directly.
 
-### Caveat: `GH_TOKEN=$GH_PAT` mapping may break `gh-gpgsign` (unverified, 2026-05)
+### Commit signing: what breaks `gh-gpgsign` (verified 2026-10-25 and 2026-10-29)
 
-The `containerEnv` mapping `"GH_TOKEN": "${localEnv:GH_PAT}"` aliases a `github_pat_*` (user fine-grained PAT) onto `GH_TOKEN`. Empirical observation in the qte77 ecosystem suggests this can break the Codespaces commit-signing helper `/.codespaces/bin/gh-gpgsign`, which appears to require the auto-injected `ghu_*` token specifically.
+`/.codespaces/bin/gh-gpgsign` signs through the Codespaces identity service using the auto-injected
+`ghu_*` token in `GITHUB_TOKEN`. Three causes of failed or unsigned commits were confirmed in this
+codespace; each was fixed by removing the cause, not by turning signing off.
 
-Symptom: `git commit` fails with `gpg: skipped "GitHub <noreply@github.com>": No secret key`.
+| Cause | Symptom |
+| --- | --- |
+| `GITHUB_TOKEN` unset for the commit (e.g. `env -u GH_TOKEN -u GITHUB_TOKEN git commit`, or a whole agent process started under `env -u GITHUB_TOKEN`) | `gpg: skipped "GitHub <noreply@github.com>": No secret key` |
+| A `user.name` in `~/.gitconfig` that doesn't match the GitHub profile name, or a commit authored as someone else (e.g. `git am` of a patch written by another identity) | the signer answers `403 Author is invalid` |
+| A repo-local `commit.gpgsign false` left behind by an old workaround | the commit succeeds but is unsigned |
 
-Side-by-side reproduction (same codespace, identical config from the diagnostic audit below):
+A/B test of the token cause (2026-10-29, same shell, the probe below reported `GH_TOKEN: github_pat_`
+and `GITHUB_TOKEN: ghu_`):
 
-- Shell where `GH_TOKEN` is unset or `ghu_*` (auto-injected) → `gh-gpgsign` works → commit signed with RSA `B5690EEEBB952194` ✓
-- Shell where `GH_TOKEN=$GH_PAT` (a `github_pat_*`) → `gh-gpgsign` fails with "No secret key" ✗
+| Shell | Result |
+| --- | --- |
+| both tokens set | signed |
+| `GH_TOKEN` unset, `GITHUB_TOKEN` set | signed |
+| `GITHUB_TOKEN` unset, `GH_TOKEN` (the PAT) set | "No secret key" |
 
-**Hypothesis**: `gh-gpgsign` follows gh's standard token precedence (`GH_TOKEN` → `GITHUB_TOKEN`) when authenticating to the Codespaces identity service. The service rejects user PATs (only accepts the `ghu_*` GitHub App token), `gh-gpgsign` falls through to gpg's default keyring, finds nothing, reports the missing local key.
+So the 2026-05 hypothesis holds in a narrower form: the PAT in `GH_TOKEN` does no harm while
+`GITHUB_TOKEN` is set, because `GITHUB_TOKEN` wins (the precedence above); signing fails only once
+`GITHUB_TOKEN` is gone and the PAT is all that is left. Why the service refuses the PAT was not tested.
 
-**Confirming probe** (run in the failing shell):
+Rule: prefix `gh` calls and git network calls (`fetch`, `push`, `ls-remote`) with
+`env -u GH_TOKEN -u GITHUB_TOKEN`; never strip `GITHUB_TOKEN` from `git commit` or from a whole agent
+process. Don't fix signing with `--no-gpg-sign`, `-c commit.gpgsign=false` or a local
+`commit.gpgsign false`.
+
+Token-type probe (prints only the type, never the value):
 
 ```bash
 for v in GH_PAT GH_TOKEN GITHUB_TOKEN; do
-  val="${!v}"
-  case "$val" in
+  case "${!v}" in
     "")            echo "$v: <unset>" ;;
     ghu_*)         echo "$v: ghu_ (auto-injected, short-lived)" ;;
     github_pat_*)  echo "$v: github_pat_ (user fine-grained PAT)" ;;
-    *)             echo "$v: prefix=${val:0:5}..." ;;
+    *)             echo "$v: other" ;;
   esac
 done
 ```
 
-If output shows `GH_TOKEN: github_pat_*` while `GITHUB_TOKEN: <unset>` (or also `github_pat_*`), the hypothesis stands. The fix would be: drop the `GH_TOKEN` mapping from `containerEnv` (keep `GH_PAT` available for tools that read it explicitly), letting `GH_TOKEN`/`GITHUB_TOKEN` revert to Codespaces auto-injection. Tools that need PAT scopes can opt-in per-call: `GH_TOKEN=$GH_PAT gh pr merge ...`.
-
-This issue is tracked at [#64](https://github.com/qte77/polyforge-orchestrator/issues/64). **Do not amend the convention** until the probe confirms or refutes.
+Dropping the `GH_TOKEN` mapping from `containerEnv` is not needed for signing as long as
+`GITHUB_TOKEN` stays set. Tracked in [#64](https://github.com/qte77/polyforge-orchestrator/issues/64).
 
 ### Escape hatch: explicitly drop env precedence
 
@@ -193,6 +208,9 @@ This is already the canonical pattern in `Makefile`'s `setup_rtk`
 target — see lines around the `curl … rtk install.sh` invocation. Use
 it as the example when documenting any new automation that must run
 under a different token (or no token at all).
+
+**Exception — never for `git commit`.** The signer needs `GITHUB_TOKEN`; a commit run under
+`env -u GITHUB_TOKEN` fails with "No secret key" (see "Commit signing" above).
 
 **Caveat — this is not a privilege-reduction mechanism.** Dropping
 `GH_TOKEN`/`GITHUB_TOKEN` only changes which *already-present*
