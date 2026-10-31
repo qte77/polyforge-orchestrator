@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `docs/codespaces.md`: replaced the unverified 2026-05 `gh-gpgsign` caveat with the three
+  confirmed causes of failed or unsigned Codespace commits (`GITHUB_TOKEN` stripped from the commit,
+  a `user.name` that doesn't match the GitHub profile, a leftover local `commit.gpgsign false`) and
+  the 2026-10-29 token A/B test; the `env -u` escape hatch now says never to use it for
+  `git commit` (#64)
+
 - `scripts/cc-parallel.sh`: gave the `validate`, `security-all`, and `security-pr` presets
   explicit, least-privilege permission flags for the spawned `claude -p` instead of relying on
   implicit Manual mode. Per Anthropic's headless docs, `claude -p` starts in Manual mode when no
