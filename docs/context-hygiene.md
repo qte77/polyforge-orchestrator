@@ -6,8 +6,9 @@ isolation); this doc covers **why** and **how** to use it.
 
 ## The cascade problem
 
-CC auto-discovers `CLAUDE.md`, `AGENTS.md`, and every `.claude/rules/*.md`
-in any repo it reads from. When a parent session reads a sibling repo's
+CC auto-discovers `CLAUDE.md` (or `AGENTS.md` where a directory has no
+`CLAUDE.md`, CC v2.1.277+) and every `.claude/rules/*.md` in any repo it
+reads from. When a parent session reads a sibling repo's
 file — even a single README via the `Read` tool — that sibling's full
 rule set silently loads into the parent's context.
 
@@ -19,7 +20,7 @@ the cascade.
 
 In the qte77 orchestrator session, a single `Read` of
 `/workspaces/polyforge-orchestrator/config/contributions.json` was
-enough to load polyforge's `CLAUDE.md` plus three `.claude/rules/*.md`
+enough to load polyforge's `CLAUDE.md` (now `AGENTS.md`) plus three `.claude/rules/*.md`
 files into the parent's context. Pure verification of one config file's
 existence pulled in ~140 lines of rule prose. The pollution was harmless
 in that case (rules matched the parent's), but the mechanism is real
@@ -50,6 +51,13 @@ scenario:
 | **Multi-repo targeted edits** (rules-light) | `--bare --add-dir /workspaces/A --add-dir /workspaces/B` — scope filesystem without auto-loading the whole tree. |
 | **Multi-repo edits requiring rule enforcement** | Separate sessions per target repo (one per repo, parallel via `cc-parallel.sh`). The cleanest path when rules matter. |
 | **One-off peek into a sibling** | Spawn a subagent — child's cascade stays in *its* context, not yours. |
+
+**`--add-dir` and `AGENTS.md`:** with
+`CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` set, an added directory's
+`CLAUDE.md` loads but its `AGENTS.md` does not
+([memory docs](https://code.claude.com/docs/en/memory#where-agentsmd-differs-from-claudemd)).
+Repos that ship only `AGENTS.md` (like this one) get filesystem reach via
+`--add-dir`, not their instructions.
 
 `--bare` is a floor, not a default. Combine with `--add-dir` when you
 *do* want selective filesystem reach. For mission-critical edits where
