@@ -69,6 +69,14 @@
         "tracked": {
           "type": "boolean",
           "description": "Whether this plan is actively feeding tasks into repos"
+        },
+        "goal_id": {
+          "type": "string",
+          "description": "ID of the qte77/goals.json goal this campaign serves (link by reference)"
+        },
+        "note": {
+          "type": ["string", "null"],
+          "description": "Free-form plan-level context: status, blockers, defer conditions"
         }
       }
     },
