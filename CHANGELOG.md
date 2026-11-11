@@ -59,6 +59,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `README.md`: follows the qte77 doc-structure canon (License/Version/CodeFactor badges,
   What/How/Why/Refs/License sections) (#77, PR #96).
 
+### Security
+
+- `package.json`, `package-lock.json`: `markdownlint-cli` 0.49.0 → 0.50.0, which pins
+  `js-yaml` `~5.5.0` instead of `~5.2.1` — Dependabot's security update was blocked
+  (`security_update_not_possible`) because the pinned `markdownlint-cli@0.49.1` range never
+  reached the fixed `js-yaml@5.4.1`. The bump also resolves the transitive `brace-expansion`,
+  `markdown-it`, and `smol-toml` advisories pulled in by the same subtree; `npm audit` findings
+  drop from 9 (2 high, 4 moderate, 3 low) to 5 (0 high, 2 moderate, 3 low) — the remaining ones
+  (`minimatch`, `markdownlint`, `katex`, `micromark-extension-math`) are unrelated to this
+  advisory and need a semver-major `markdownlint-cli` downgrade npm itself doesn't recommend.
+
 ## [0.1.0] - 2026-09-23
 
 ### Changed
