@@ -13,11 +13,13 @@
 # scan-target one plus a second, broader one (every archived/fork state) used only to grow the
 # redaction name set, never as scan targets -- and a hard backstop (verify-redaction.py) re-checks
 # every output file for any self-discovered name before a summary is written, aborting the run if
-# one survived. --redact-from FILE adds more names (one per line, blank/#///-comment lines and a
-# trailing " # ..." comment skipped) from an externally-maintained list, for names outside this
-# owner's reach entirely. The private-NN numbering is assigned from the full repo set before the
-# --scope filter is applied, so a given repo keeps the same label across scopes. CodeFactor grades
-# come from the public badge on www.codefactor.io, public repos only.
+# one survived. --redact-from FILE adds more names (one per line, via scripts/redact_names.py:
+# blank/#///-comment lines skipped, a trailing " # ..." comment dropped, and a trailing non-hash
+# annotation like " (note)" also dropped -- only the first token after the last "/" is kept) from
+# an externally-maintained list, for names outside this owner's reach entirely. The private-NN
+# numbering is assigned from the full repo set before the --scope filter is applied, so a given
+# repo keeps the same label across scopes. CodeFactor grades come from the public badge on
+# www.codefactor.io, public repos only.
 #
 # Repos with an open Claude Code session (interactive, or background not in
 # blocked/done/failed/stopped) are skipped; recent non-bot PRs elsewhere are listed as "in
@@ -48,7 +50,7 @@ OUT_DIR="${REPO_ROOT}/runs"
 REDACT_FROM=""
 
 usage() {
-  head -38 "$0" | grep '^#' | sed 's/^# \?//'
+  head -40 "$0" | grep '^#' | sed 's/^# \?//'
   exit 1
 }
 
@@ -249,19 +251,16 @@ fi
 # this run's narrower --no-archived --source listing couldn't see at all). Scrub that out of the
 # title column everywhere, using self-discovered names (both listings above) plus, optionally,
 # --redact-from FILE for names from an externally-maintained list (one bare name, or owner/repo,
-# per line; blank lines, whole-line # or // comments, and a trailing " # ..." inline comment are
-# all skipped) -- for repos outside this owner entirely, or otherwise beyond even the broader
-# listing's reach. --redact-from has no hard-coded dependency on any specific file.
+# per line; blank lines, whole-line # or // comments, a trailing " # ..." inline comment, and a
+# trailing non-hash annotation like " (note)" are all skipped/dropped -- see
+# scripts/redact_names.py) -- for repos outside this owner entirely, or otherwise beyond even the
+# broader listing's reach. --redact-from has no hard-coded dependency on any specific file.
 cp "$out/.self-private-names" "$out/.private-names"
 if [[ -n "$REDACT_FROM" ]]; then
-  while IFS= read -r ln; do
-    s="${ln%%$'\r'}"; s="${s#"${s%%[![:space:]]*}"}"  # trim trailing CR and leading whitespace
-    [[ -z "$s" || "$s" == \#* || "$s" == //* ]] && continue
-    s="${s%%#*}"                              # drop a trailing inline "# comment"
-    s="${s%"${s##*[![:space:]]}"}"            # trim the whitespace that comment left behind
-    [[ -z "$s" ]] && continue
-    printf '%s\n' "${s##*/}" >> "$out/.private-names"
-  done < "$REDACT_FROM"
+  if ! python3 -I "$SCRIPT_DIR/redact_names.py" "$REDACT_FROM" >> "$out/.private-names"; then
+    error "parsing --redact-from file failed: $REDACT_FROM"
+    exit 1
+  fi
 fi
 if [[ -s "$out/.private-names" ]]; then
   for f in prs.tsv issues.tsv notifications.tsv; do
