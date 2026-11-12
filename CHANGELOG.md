@@ -61,6 +61,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   a different `--owner` using the default `--out` could leave scratch files next to an unrelated
   owner's run in the same directory; the path now includes `--owner`, and the early-exit guards
   clean up their own scratch files instead of leaving them behind (#102).
+- `scripts/verify-redaction.py`, `scripts/estate-status.sh`: closed a third gap, found by an
+  independent re-check of the previous fix -- a public repo's title naming a private repo outside
+  even the `--no-archived --source` scan listing entirely (archived or forked). Self-discovery now
+  also runs a second, broader `gh repo list` (every archived/fork state) feeding only the
+  redaction name set, never scan targets; `verify-redaction.py` is a hard backstop that re-checks
+  every output file (not just the title columns `scrub-titles.py` rewrites) for any
+  self-discovered name after scrubbing, and aborts the run -- no summary written -- if one
+  survived (#102).
+- `scripts/redact_names.py`, `scripts/test_redact_names.py`: extracted the `--redact-from`
+  names-file line parser out of `estate-status.sh`'s inline loop into its own unit-tested module.
+  The extraction surfaced a real parsing gap: a line with a trailing non-hash annotation (e.g.
+  `owner/name (note)`) kept the annotation as part of the extracted name, which could then never
+  match anything real -- the previous fix only stripped a trailing `# comment`, not this shape.
+  Now only the first whitespace-delimited token after the last `/` is kept. Covered by 12 unit
+  tests (synthetic names); this repo has no other test harness, so this is a minimal standalone
+  `unittest` module next to the script it tests (#102).
 - `config/contributions.schema.json`: optional `goal_id` on plans, linking a campaign to a
   `qte77/goals.json` goal by reference. Plans also accept `note`, which `contributions.json`
   already used (#79, PR #97).
