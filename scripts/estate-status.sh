@@ -5,10 +5,15 @@
 #
 # Scope: --scope public (default) scans public repos only; --scope private scans private repos
 # only; --scope all scans both. Private repos are never printed by name -- only as masked labels
-# (private-NN) in stdout, files, and error messages; their PR/issue titles are masked too. The
-# private-NN numbering is assigned from the full repo set before the --scope filter is applied, so
-# a given repo keeps the same label across scopes. CodeFactor grades come from the public badge on
-# www.codefactor.io and are fetched for public repos only.
+# (private-NN) in stdout, files, and error messages; their own PR/issue titles are masked too. Any
+# *other* repo's title text (including a public repo's) is additionally scrubbed of mentions of
+# this owner's private repo names, via scripts/scrub-titles.py, since free text can otherwise name
+# a private repo incidentally (seen live: an old repo name, from before a rename). That self-
+# discovery only covers repos this run can currently see; --redact-from FILE adds more names (one
+# per line, blanks/#/// comments skipped) from an externally-maintained list, for repos that are
+# renamed, deleted, archived, or forked. The private-NN numbering is assigned from the full repo
+# set before the --scope filter is applied, so a given repo keeps the same label across scopes.
+# CodeFactor grades come from the public badge on www.codefactor.io, public repos only.
 #
 # Repos with an open Claude Code session (interactive, or background not in
 # blocked/done/failed/stopped) are skipped; recent non-bot PRs elsewhere are listed as "in
@@ -21,8 +26,12 @@
 # fixes). Per-repo alert/PR/issue calls keep the original soft-degradation: a failed call for one
 # repo shows as "n/a" / "ERR" in its row rather than aborting the whole sweep.
 #
-# Usage: estate-status.sh [--owner NAME] [--scope public|private|all] [--out DIR]
-# Output: <out>/estate-status-<date>/{repos,prs,issues,alerts,notifications,excluded}.tsv + summary.md
+# Usage: estate-status.sh [--owner NAME] [--scope public|private|all] [--out DIR] [--redact-from FILE]
+# Output: <out>/estate-status-<owner>-<date>/{repos,prs,issues,alerts,notifications,excluded}.tsv
+# + summary.md. The owner is part of the path so two different --owner runs on the same day under
+# the same default --out can never share scratch files (a real collision found during review: an
+# --owner cli test run's leftover temp files sat next to an unrelated --owner qte77 run's real
+# output in the same date-only directory, and were mistaken for corruption of that run).
 set -uo pipefail  # not -e: several counts below use `grep -c`, which exits 1 by design on no match
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -32,9 +41,10 @@ source "${SCRIPT_DIR}/colors.sh"
 OWNER="qte77"
 SCOPE="public"
 OUT_DIR="${REPO_ROOT}/runs"
+REDACT_FROM=""
 
 usage() {
-  head -25 "$0" | grep '^#' | sed 's/^# \?//'
+  head -34 "$0" | grep '^#' | sed 's/^# \?//'
   exit 1
 }
 
@@ -43,6 +53,7 @@ while [[ $# -gt 0 ]]; do
     --owner) OWNER="$2"; shift 2 ;;
     --scope) SCOPE="$2"; shift 2 ;;
     --out) OUT_DIR="$2"; shift 2 ;;
+    --redact-from) REDACT_FROM="$2"; shift 2 ;;
     --help|-h) usage ;;
     *) error "Unknown option: $1"; usage ;;
   esac
@@ -50,8 +61,9 @@ done
 
 [[ "$SCOPE" =~ ^(public|private|all)$ ]] || { error "--scope must be public, private, or all (got: $SCOPE)"; exit 1; }
 [[ "$OWNER" =~ ^[A-Za-z0-9-]+$ ]] || { error "--owner looks malformed (got: $OWNER)"; exit 1; }
+[[ -z "$REDACT_FROM" || -r "$REDACT_FROM" ]] || { error "--redact-from file is not readable: $REDACT_FROM"; exit 1; }
 
-out="${OUT_DIR}/estate-status-$(date -u +%F)"
+out="${OUT_DIR}/estate-status-${OWNER}-$(date -u +%F)"
 mkdir -p "$out"
 G() { env -u GH_TOKEN -u GITHUB_TOKEN gh "$@"; }
 
@@ -76,6 +88,7 @@ if ! G repo list "$OWNER" --no-archived --source --limit 400 \
   --jq '.[] | [.name, (.isPrivate|tostring), (.defaultBranchRef.name // "main")] | @tsv' \
   | sort -f > "$out/.repos.raw"; then
   error "gh repo list for '$OWNER' failed -- check 'gh auth status' and network, then retry"
+  rm -f "$out/.repos.raw"
   exit 1
 fi
 
@@ -89,6 +102,7 @@ done < "$out/.repos.raw"
 
 if [[ $total -eq 0 ]]; then
   error "0 repos returned for owner '$OWNER' -- check the owner name and 'gh auth status'; refusing to write a summary"
+  rm -f "$out/.repos.raw"
   exit 1
 fi
 
@@ -104,6 +118,7 @@ done < "$out/.repos.raw"
 
 if [[ ! -s "$out/.repos.scoped" ]]; then
   error "0 of $total repos match --scope $SCOPE for owner '$OWNER' -- refusing to write a summary"
+  rm -f "$out/.repos.raw" "$out/.repos.scoped"
   exit 1
 fi
 
@@ -133,6 +148,13 @@ printf 'repo\tsource\tseverity\tpackage_or_rule\tcreated\n' > "$out/alerts.tsv"
 
 while IFS=$'\t' read -r name priv branch; do
   [[ -n ${skip[$name]:-} ]] && continue
+  # Belt-and-suspenders: .repos.scoped is already filtered by scope above, but assert it here
+  # too, since this loop is what actually writes rows -- a bug upstream must not silently scan
+  # the wrong visibility.
+  case "$SCOPE" in
+    public)  if [[ $priv != false ]]; then error "internal: scope=public but $priv for a scanned repo -- aborting"; exit 1; fi ;;
+    private) if [[ $priv != true ]];  then error "internal: scope=private but $priv for a scanned repo -- aborting"; exit 1; fi ;;
+  esac
   L=${label[$name]}; R="$OWNER/$name"
   # Private repos: titles can carry names, so only counts and states are kept.
   t='.title'; [[ $priv == true ]] && t='"-"'
@@ -201,7 +223,40 @@ fi
   done
 } > "$out/notifications.tsv"
 
-rm -f "$out/.pr" "$out/.iss" "$out/.repos.raw" "$out/.repos.scoped"
+# --- scrub private-repo-name mentions from title text, in any repo's row ----------------------
+# A public repo's own title is not masked, but it can still name one of this owner's private
+# repos as ordinary free text (seen live: a public repo's issue title mentioning one -- the
+# repo's OLD name, from before a rename, since GitHub's rename redirect kept resolving it). Scrub
+# that out of the title column everywhere, using every private name this run already knows about
+# from the full (pre-scope-filter) label map. That only covers repos this run can currently
+# discover (the live, non-archived, source repos under $OWNER): a renamed, deleted, transferred,
+# archived, or forked private repo's old/other name is invisible to it. --redact-from FILE adds
+# names from an externally-maintained list (one bare name, or owner/repo, per line; # and //
+# lines and blanks are skipped) to cover that gap, without hard-coding any such file into the
+# script itself.
+: > "$out/.private-names"
+for k in "${!label[@]}"; do
+  [[ ${label[$k]} == private-* ]] && printf '%s\n' "$k" >> "$out/.private-names"
+done
+if [[ -n "$REDACT_FROM" ]]; then
+  while IFS= read -r ln; do
+    s="${ln%%$'\r'}"; s="${s#"${s%%[![:space:]]*}"}"  # trim trailing CR and leading whitespace
+    [[ -z "$s" || "$s" == \#* || "$s" == //* ]] && continue
+    printf '%s\n' "${s##*/}" >> "$out/.private-names"
+  done < "$REDACT_FROM"
+fi
+if [[ -s "$out/.private-names" ]]; then
+  for f in prs.tsv issues.tsv notifications.tsv; do
+    if python3 -I "$SCRIPT_DIR/scrub-titles.py" "$out/.private-names" < "$out/$f" > "$out/.scrubbed"; then
+      mv "$out/.scrubbed" "$out/$f"
+    else
+      error "redacting private-repo names from $f failed -- refusing to leave an unscrubbed file"
+      exit 1
+    fi
+  done
+fi
+
+rm -f "$out/.pr" "$out/.iss" "$out/.repos.raw" "$out/.repos.scoped" "$out/.private-names"
 
 # --- summary ---------------------------------------------------------------------------------
 {
