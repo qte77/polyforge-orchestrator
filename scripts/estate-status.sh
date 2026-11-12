@@ -31,7 +31,7 @@ source "${SCRIPT_DIR}/colors.sh"
 
 OWNER="qte77"
 SCOPE="public"
-OUT_BASE="${REPO_ROOT}/runs/estate-status"
+OUT_DIR="${REPO_ROOT}/runs"
 
 usage() {
   head -25 "$0" | grep '^#' | sed 's/^# \?//'
@@ -42,7 +42,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --owner) OWNER="$2"; shift 2 ;;
     --scope) SCOPE="$2"; shift 2 ;;
-    --out) OUT_BASE="$2"; shift 2 ;;
+    --out) OUT_DIR="$2"; shift 2 ;;
     --help|-h) usage ;;
     *) error "Unknown option: $1"; usage ;;
   esac
@@ -51,7 +51,7 @@ done
 [[ "$SCOPE" =~ ^(public|private|all)$ ]] || { error "--scope must be public, private, or all (got: $SCOPE)"; exit 1; }
 [[ "$OWNER" =~ ^[A-Za-z0-9-]+$ ]] || { error "--owner looks malformed (got: $OWNER)"; exit 1; }
 
-out="${OUT_BASE}-$(date -u +%F)"
+out="${OUT_DIR}/estate-status-$(date -u +%F)"
 mkdir -p "$out"
 G() { env -u GH_TOKEN -u GITHUB_TOKEN gh "$@"; }
 
