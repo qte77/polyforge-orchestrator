@@ -18,6 +18,10 @@ devcontainer or vscode workspace.
 - Each sibling repo's own devcontainer setup replayed inside the host container
 - One repo list (`config/repos.conf`) drives cloning, workspace generation and
   runs
+- A read-only GitHub-side estate sweep (`scripts/estate-status.sh`): open
+  PRs/issues, Dependabot/CodeQL alerts, CodeFactor and CI state, across every
+  repo an owner has, scoped to `--scope public` (default), `private`, or `all`
+  — private repos are only ever shown as masked `private-NN` labels
 
 <details>
   <summary>Workspace preview — multi-repo IDE layout with parallel terminals</summary>
@@ -33,6 +37,7 @@ devcontainer or vscode workspace.
 ./scripts/cc-parallel.sh --preset security-all  # repo-wide audit (all repos)
 ./scripts/cc-parallel.sh --preset security-pr   # diff-scoped, untrusted PRs
 ./scripts/cc-status.sh
+./scripts/estate-status.sh --scope public       # GitHub-side estate sweep; private|all also available
 ```
 
 Repos: edit `config/repos.conf`. Credentials: set `GH_PAT` as Codespace secret.

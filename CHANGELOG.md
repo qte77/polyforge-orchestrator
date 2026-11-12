@@ -35,6 +35,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `scripts/estate-status.sh`, `scripts/codefactor-grade.py`: ported the local, unversioned
+  estate sweep into the repo (open PRs/issues, Dependabot/CodeQL alerts, CodeFactor and
+  default-branch CI state, open `TODO.md` items, notifications, across every source repo an
+  owner has). `--scope public` (default), `private`, or `all` selects what gets scanned; private
+  repos are only ever shown as masked `private-NN` labels, never by name, with their PR/issue
+  titles masked too. Read-only against GitHub; run output goes to the gitignored `runs/`
+  (override with `--out`). Fixes the false all-clear from the unversioned script's last real run,
+  which reported "0 repos scanned" as a normal-looking, all-zero summary: that script never
+  checked the exit status of its initial repo listing, so an upstream hiccup produced an empty
+  scratch file it then happily summarized. The port exits non-zero with no summary written when
+  the repo listing or notifications call fails, or when the scan (after the `--scope` filter)
+  covers 0 repos, and claims a per-output-directory lock so a second concurrent run on the same
+  day fails loudly instead of racing on the shared scratch files -- a race this estate's own
+  concurrent agent sessions were observed triggering while this fix was being written (#102).
 - `config/contributions.schema.json`: optional `goal_id` on plans, linking a campaign to a
   `qte77/goals.json` goal by reference. Plans also accept `note`, which `contributions.json`
   already used (#79, PR #97).
