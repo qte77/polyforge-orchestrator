@@ -8,12 +8,16 @@
 # (private-NN) in stdout, files, and error messages; their own PR/issue titles are masked too. Any
 # *other* repo's title text (including a public repo's) is additionally scrubbed of mentions of
 # this owner's private repo names, via scripts/scrub-titles.py, since free text can otherwise name
-# a private repo incidentally (seen live: an old repo name, from before a rename). That self-
-# discovery only covers repos this run can currently see; --redact-from FILE adds more names (one
-# per line, blanks/#/// comments skipped) from an externally-maintained list, for repos that are
-# renamed, deleted, archived, or forked. The private-NN numbering is assigned from the full repo
-# set before the --scope filter is applied, so a given repo keeps the same label across scopes.
-# CodeFactor grades come from the public badge on www.codefactor.io, public repos only.
+# a private repo incidentally (seen live, twice: once an old, pre-rename name; once a repo outside
+# the --no-archived --source scan listing entirely). Self-discovery uses two listings -- the
+# scan-target one plus a second, broader one (every archived/fork state) used only to grow the
+# redaction name set, never as scan targets -- and a hard backstop (verify-redaction.py) re-checks
+# every output file for any self-discovered name before a summary is written, aborting the run if
+# one survived. --redact-from FILE adds more names (one per line, blank/#///-comment lines and a
+# trailing " # ..." comment skipped) from an externally-maintained list, for names outside this
+# owner's reach entirely. The private-NN numbering is assigned from the full repo set before the
+# --scope filter is applied, so a given repo keeps the same label across scopes. CodeFactor grades
+# come from the public badge on www.codefactor.io, public repos only.
 #
 # Repos with an open Claude Code session (interactive, or background not in
 # blocked/done/failed/stopped) are skipped; recent non-bot PRs elsewhere are listed as "in
@@ -44,7 +48,7 @@ OUT_DIR="${REPO_ROOT}/runs"
 REDACT_FROM=""
 
 usage() {
-  head -34 "$0" | grep '^#' | sed 's/^# \?//'
+  head -38 "$0" | grep '^#' | sed 's/^# \?//'
   exit 1
 }
 
@@ -103,6 +107,22 @@ done < "$out/.repos.raw"
 if [[ $total -eq 0 ]]; then
   error "0 repos returned for owner '$OWNER' -- check the owner name and 'gh auth status'; refusing to write a summary"
   rm -f "$out/.repos.raw"
+  exit 1
+fi
+
+# The listing above is --no-archived --source: correct for deciding what to actively scan, but it
+# means an archived or forked private repo's name is invisible here even though it's still a
+# real, current private repo under this owner -- and free text elsewhere can still name it. A
+# second, broader listing (every visibility/archived/fork state) exists ONLY to grow the
+# redaction name set below; nothing from it is ever added to .repos.scoped or scanned.
+: > "$out/.self-private-names"
+for k in "${!label[@]}"; do
+  [[ ${label[$k]} == private-* ]] && printf '%s\n' "$k" >> "$out/.self-private-names"
+done
+if ! G repo list "$OWNER" --limit 400 --json name,isPrivate --jq '.[] | select(.isPrivate) | .name' \
+  >> "$out/.self-private-names"; then
+  error "broader gh repo list for '$OWNER' (redaction-name harvest) failed -- check 'gh auth status' and network, then retry"
+  rm -f "$out/.repos.raw" "$out/.self-private-names"
   exit 1
 fi
 
@@ -225,23 +245,21 @@ fi
 
 # --- scrub private-repo-name mentions from title text, in any repo's row ----------------------
 # A public repo's own title is not masked, but it can still name one of this owner's private
-# repos as ordinary free text (seen live: a public repo's issue title mentioning one -- the
-# repo's OLD name, from before a rename, since GitHub's rename redirect kept resolving it). Scrub
-# that out of the title column everywhere, using every private name this run already knows about
-# from the full (pre-scope-filter) label map. That only covers repos this run can currently
-# discover (the live, non-archived, source repos under $OWNER): a renamed, deleted, transferred,
-# archived, or forked private repo's old/other name is invisible to it. --redact-from FILE adds
-# names from an externally-maintained list (one bare name, or owner/repo, per line; # and //
-# lines and blanks are skipped) to cover that gap, without hard-coding any such file into the
-# script itself.
-: > "$out/.private-names"
-for k in "${!label[@]}"; do
-  [[ ${label[$k]} == private-* ]] && printf '%s\n' "$k" >> "$out/.private-names"
-done
+# repos as ordinary free text (seen live, twice now: once an old, pre-rename name; once a repo
+# this run's narrower --no-archived --source listing couldn't see at all). Scrub that out of the
+# title column everywhere, using self-discovered names (both listings above) plus, optionally,
+# --redact-from FILE for names from an externally-maintained list (one bare name, or owner/repo,
+# per line; blank lines, whole-line # or // comments, and a trailing " # ..." inline comment are
+# all skipped) -- for repos outside this owner entirely, or otherwise beyond even the broader
+# listing's reach. --redact-from has no hard-coded dependency on any specific file.
+cp "$out/.self-private-names" "$out/.private-names"
 if [[ -n "$REDACT_FROM" ]]; then
   while IFS= read -r ln; do
     s="${ln%%$'\r'}"; s="${s#"${s%%[![:space:]]*}"}"  # trim trailing CR and leading whitespace
     [[ -z "$s" || "$s" == \#* || "$s" == //* ]] && continue
+    s="${s%%#*}"                              # drop a trailing inline "# comment"
+    s="${s%"${s##*[![:space:]]}"}"            # trim the whitespace that comment left behind
+    [[ -z "$s" ]] && continue
     printf '%s\n' "${s##*/}" >> "$out/.private-names"
   done < "$REDACT_FROM"
 fi
@@ -256,7 +274,19 @@ if [[ -s "$out/.private-names" ]]; then
   done
 fi
 
-rm -f "$out/.pr" "$out/.iss" "$out/.repos.raw" "$out/.repos.scoped" "$out/.private-names"
+# --- hard backstop: no self-discovered private name may survive, anywhere, in any output file -
+# scrub-titles.py only rewrites title columns; this checks every column of every data file (the
+# repo-label column can never collide, since names are unique per owner) and refuses to write a
+# summary -- the one artifact meant to be skimmed and trusted -- if anything survived. Checked
+# against self-discovered names only (--redact-from names come from outside this run and aren't
+# independently confirmed current, so they aren't a fair "this must be gone" assertion target).
+if [[ -s "$out/.self-private-names" ]] && ! python3 -I "$SCRIPT_DIR/verify-redaction.py" "$out/.self-private-names" \
+  "$out/repos.tsv" "$out/prs.tsv" "$out/issues.tsv" "$out/alerts.tsv" "$out/notifications.tsv" "$out/excluded.tsv"; then
+  error "a self-discovered private-repo name survived redaction -- refusing to write a summary (see stderr above for file:line)"
+  exit 1
+fi
+
+rm -f "$out/.pr" "$out/.iss" "$out/.repos.raw" "$out/.repos.scoped" "$out/.private-names" "$out/.self-private-names"
 
 # --- summary ---------------------------------------------------------------------------------
 {
