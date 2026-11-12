@@ -5,7 +5,7 @@ SHELL := /bin/bash
 	help setup_all setup_repos setup_vscode setup_gh_auth setup_claude_home \
 	setup_claude_code setup_claude_sandbox setup_rtk setup_npm_tools setup_lychee \
 	generate_tasks clone_repos \
-	contrib_setup contrib_status contrib_cleanup
+	contrib_setup contrib_status contrib_cleanup estate_status
 .DEFAULT_GOAL := help
 
 # Source colors for all recipes
@@ -188,6 +188,14 @@ contrib_cleanup:  ## Prune worktrees and stale contribution branches
 		fi; \
 	done
 	success "Cleanup complete"
+
+
+# MARK: ESTATE
+
+
+estate_status:  ## Read-only GitHub estate sweep, public repos (scripts/estate-status.sh --help for scope/owner)
+	$(_src_colors)
+	bash scripts/estate-status.sh
 
 
 # MARK: HELP

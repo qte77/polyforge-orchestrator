@@ -35,6 +35,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `scripts/estate-status.sh`, `scripts/codefactor-grade.py`: ported the local, unversioned
+  estate sweep into the repo (open PRs/issues, Dependabot/CodeQL alerts, CodeFactor and
+  default-branch CI state, open `TODO.md` items, notifications, across every source repo an
+  owner has). `--scope public` (default), `private`, or `all` selects what gets scanned; private
+  repos are only ever shown as masked `private-NN` labels, never by name, with their PR/issue
+  titles masked too. Read-only against GitHub; run output goes to the gitignored `runs/`
+  (override with `--out`). Fixes the false all-clear from the unversioned script's last real run,
+  which reported "0 repos scanned" as a normal-looking, all-zero summary: that script never
+  checked the exit status of its initial repo listing, so an upstream hiccup produced an empty
+  scratch file it then happily summarized. The port exits non-zero with no summary written when
+  the repo listing or notifications call fails, or when the scan (after the `--scope` filter)
+  covers 0 repos, and claims a per-output-directory lock so a second concurrent run on the same
+  day fails loudly instead of racing on the shared scratch files -- this estate's own concurrent
+  agent sessions were observed actually running the unversioned script against each other, by
+  coincidence, while this fix was being written; a losing race between them would reproduce
+  exactly the false all-clear this fixes, though that race was not itself observed firing (#102).
+- `scripts/scrub-titles.py`, `scripts/estate-status.sh`: closed two further gaps found while
+  verifying #102's "private repos never named" requirement. First, a public repo's issue/PR title
+  can incidentally name a private repo as free text (confirmed live: an old, pre-rename name of a
+  still-private repo, via GitHub's rename redirect); `scrub-titles.py` now redacts every
+  self-discovered private name from title columns, and `--redact-from FILE` adds names from an
+  externally-maintained list for repos a run cannot discover on its own (renamed, deleted,
+  transferred, archived, forked). Second, the output path was keyed only by date, so a run under
+  a different `--owner` using the default `--out` could leave scratch files next to an unrelated
+  owner's run in the same directory; the path now includes `--owner`, and the early-exit guards
+  clean up their own scratch files instead of leaving them behind (#102).
+- `scripts/verify-redaction.py`, `scripts/estate-status.sh`: closed a third gap, found by an
+  independent re-check of the previous fix -- a public repo's title naming a private repo outside
+  even the `--no-archived --source` scan listing entirely (archived or forked). Self-discovery now
+  also runs a second, broader `gh repo list` (every archived/fork state) feeding only the
+  redaction name set, never scan targets; `verify-redaction.py` is a hard backstop that re-checks
+  every output file (not just the title columns `scrub-titles.py` rewrites) for any
+  self-discovered name after scrubbing, and aborts the run -- no summary written -- if one
+  survived (#102).
+- `scripts/redact_names.py`, `scripts/test_redact_names.py`: extracted the `--redact-from`
+  names-file line parser out of `estate-status.sh`'s inline loop into its own unit-tested module.
+  The extraction surfaced a real parsing gap: a line with a trailing non-hash annotation (e.g.
+  `owner/name (note)`) kept the annotation as part of the extracted name, which could then never
+  match anything real -- the previous fix only stripped a trailing `# comment`, not this shape.
+  Now only the first whitespace-delimited token after the last `/` is kept. Covered by 12 unit
+  tests (synthetic names); this repo has no other test harness, so this is a minimal standalone
+  `unittest` module next to the script it tests (#102).
 - `config/contributions.schema.json`: optional `goal_id` on plans, linking a campaign to a
   `qte77/goals.json` goal by reference. Plans also accept `note`, which `contributions.json`
   already used (#79, PR #97).
