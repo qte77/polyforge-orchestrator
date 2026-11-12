@@ -51,6 +51,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   agent sessions were observed actually running the unversioned script against each other, by
   coincidence, while this fix was being written; a losing race between them would reproduce
   exactly the false all-clear this fixes, though that race was not itself observed firing (#102).
+- `scripts/scrub-titles.py`, `scripts/estate-status.sh`: closed two further gaps found while
+  verifying #102's "private repos never named" requirement. First, a public repo's issue/PR title
+  can incidentally name a private repo as free text (confirmed live: an old, pre-rename name of a
+  still-private repo, via GitHub's rename redirect); `scrub-titles.py` now redacts every
+  self-discovered private name from title columns, and `--redact-from FILE` adds names from an
+  externally-maintained list for repos a run cannot discover on its own (renamed, deleted,
+  transferred, archived, forked). Second, the output path was keyed only by date, so a run under
+  a different `--owner` using the default `--out` could leave scratch files next to an unrelated
+  owner's run in the same directory; the path now includes `--owner`, and the early-exit guards
+  clean up their own scratch files instead of leaving them behind (#102).
 - `config/contributions.schema.json`: optional `goal_id` on plans, linking a campaign to a
   `qte77/goals.json` goal by reference. Plans also accept `note`, which `contributions.json`
   already used (#79, PR #97).

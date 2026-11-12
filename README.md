@@ -21,7 +21,10 @@ devcontainer or vscode workspace.
 - A read-only GitHub-side estate sweep (`scripts/estate-status.sh`): open
   PRs/issues, Dependabot/CodeQL alerts, CodeFactor and CI state, across every
   repo an owner has, scoped to `--scope public` (default), `private`, or `all`
-  — private repos are only ever shown as masked `private-NN` labels
+  — private repos are only ever shown as masked `private-NN` labels, and
+  mentions of their names in other repos' titles are scrubbed too (add
+  `--redact-from FILE` for repos a run can't discover on its own, e.g. a
+  renamed or deleted private repo)
 
 <details>
   <summary>Workspace preview — multi-repo IDE layout with parallel terminals</summary>
