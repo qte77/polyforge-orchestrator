@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- CodeQL workflow (`.github/workflows/codeql.yaml`) scanning `python` on every
+  push, weekly and on demand; actions pinned to full commit SHAs.
 - `scripts/estate-status.sh`, `scripts/codefactor-grade.py`: ported the local, unversioned
   estate sweep into the repo (open PRs/issues, Dependabot/CodeQL alerts, CodeFactor and
   default-branch CI state, open `TODO.md` items, notifications, across every source repo an
