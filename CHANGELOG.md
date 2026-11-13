@@ -113,6 +113,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   drop from 9 (2 high, 4 moderate, 3 low) to 5 (0 high, 2 moderate, 3 low) — the remaining ones
   (`minimatch`, `markdownlint`, `katex`, `micromark-extension-math`) are unrelated to this
   advisory and need a semver-major `markdownlint-cli` downgrade npm itself doesn't recommend.
+- `package.json`: added an `overrides` block pinning `minimatch` to `^11.0.8` and `katex` to
+  `^0.19.1`. `markdownlint-cli@0.50.0` (already latest) pins `minimatch` to `~10.2.6`, and
+  `micromark-extension-math` (a `markdownlint` dependency) pins `katex` to `^0.16.0` even in its
+  latest release — neither upstream range reaches the patched versions
+  (`GHSA-g3hv-75wg-m249`, minimatch DoS via globparts amplification; `GHSA-238p-pmpm-9mq7`, KaTeX
+  prototype pollution), so `npm audit fix` has no real fix and instead offers to downgrade
+  `markdownlint-cli` to 0.33.0. The override forces both past their declared ranges; `npx
+  markdownlint-cli "**/*.md" --ignore node_modules` produces byte-identical output before and
+  after (214 lines), and `npm audit` now reports 0 vulnerabilities.
 
 ## [0.1.0] - 2026-09-23
 
