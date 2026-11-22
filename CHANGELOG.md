@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `make contrib_setup`: the help text and the status message no longer claim a fork step. The target
+  runs `scripts/clone-repos.sh`, which only clones the repos in `config/repos.conf`; it never forks or
+  adds an `upstream` remote, and forking is out of scope. Closes #61.
+
 - `docs/codespaces.md`: replaced the unverified 2026-05 `gh-gpgsign` caveat with the three
   confirmed causes of failed or unsigned Codespace commits (`GITHUB_TOKEN` stripped from the commit,
   a `user.name` that doesn't match the GitHub profile, a leftover local `commit.gpgsign false`) and
