@@ -162,9 +162,9 @@ generate_tasks:  ## Generate workspace.code-workspace from config/repos.conf
 # MARK: CONTRIB
 
 
-contrib_setup:  ## Fork + clone external contribution repos
+contrib_setup:  ## Clone the managed repos (no fork step; forking is out of scope)
 	$(_src_colors)
-	info "Setting up contribution repos (fork + clone + upstream)..."
+	info "Cloning managed repos (does not fork or add an upstream remote)..."
 	bash scripts/clone-repos.sh
 	success "Contribution repos ready"
 
