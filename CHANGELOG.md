@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `scripts/cc-parallel.sh` reads the run cost from `.total_cost_usd`, the field `claude -p
+  --output-format json` emits, so the per-repo cost and run total populate; the contributions schema
+  description no longer mentions a `--resume` option the script doesn't have. Refs #92.
+
 - `make contrib_setup`: the help text and the status message no longer claim a fork step. The target
   runs `scripts/clone-repos.sh`, which only clones the repos in `config/repos.conf`; it never forks or
   adds an `upstream` remote, and forking is out of scope. Closes #61.
