@@ -244,7 +244,7 @@ for name in "${!PIDS[@]}"; do
   cost="n/a"
   result_preview=""
   if [[ -f "$outfile" && -s "$outfile" ]]; then
-    cost=$(jq -r '.cost_usd // .session_cost // "n/a"' "$outfile" 2>/dev/null || echo "n/a")
+    cost=$(jq -r '.total_cost_usd // "n/a"' "$outfile" 2>/dev/null || echo "n/a")
     result_preview=$(jq -r '.result // .content // "" | tostring | .[0:120]' "$outfile" 2>/dev/null || echo "")
 
     if [[ "$cost" != "n/a" ]]; then

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "contributions.schema.json",
   "title": "Contributions State",
-  "description": "Cross-project task state for polyforge-orchestrator. Machine-written by cc-parallel.sh, read for --resume. The bridge between ephemeral plans and persistent git-tracked state.",
+  "description": "Cross-project task state for polyforge-orchestrator. Machine-written by cc-parallel.sh. The bridge between ephemeral plans and persistent git-tracked state.",
   "type": "object",
   "required": ["version", "updated", "plans", "repos", "totals"],
   "additionalProperties": false,
